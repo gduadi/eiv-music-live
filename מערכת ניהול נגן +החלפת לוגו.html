@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Eiv Music – ניהול</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --p1:#7b5ea7;--p2:#b06ab3;--p3:#e0a96d;--p4:#4fc3f7;--p5:#81c784;
+  --dark:#08080f;--dark2:#0f0f18;--dark3:#161622;--dark4:#1e1e2e;
+  --border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.04);
+  --text:#f0f0f8;--muted:rgba(255,255,255,0.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;font-family:'Heebo',sans-serif;color:var(--text);background:var(--dark);overflow-x:hidden}
+
+/* ── LOGIN ── */
+#loginPage{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse 60% 50% at 30% 20%,rgba(123,94,167,0.2),transparent),
+             radial-gradient(ellipse 50% 50% at 80% 80%,rgba(224,169,109,0.12),transparent),var(--dark);
+}
+.login-card{
+  width:360px;padding:40px 36px;
+  background:rgba(15,15,24,0.9);
+  border:1px solid rgba(176,106,179,0.2);
+  border-radius:28px;
+  box-shadow:0 40px 80px rgba(0,0,0,0.5),0 0 60px rgba(123,94,167,0.08);
+  backdrop-filter:blur(20px);
+  text-align:center;
+}
+.login-logo{font-size:42px;margin-bottom:16px}
+.login-title{font-size:26px;font-weight:900;margin-bottom:4px;background:linear-gradient(135deg,var(--p2),var(--p3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.login-sub{font-size:13px;color:var(--muted);letter-spacing:1px;margin-bottom:28px}
+.l-input{
+  width:100%;height:52px;border-radius:14px;
+  border:1px solid rgba(176,106,179,0.3);
+  background:rgba(255,255,255,0.04);
+  color:#fff;font-size:18px;font-weight:900;
+  text-align:center;letter-spacing:8px;
+  outline:none;font-family:'Heebo',sans-serif;
+  transition:all 0.3s;margin-bottom:14px;
+}
+.l-input:focus{border-color:var(--p2);box-shadow:0 0 0 3px rgba(176,106,179,0.12)}
+.l-btn{
+  width:100%;height:52px;border:0;border-radius:14px;
+  font-size:17px;font-weight:900;font-family:'Heebo',sans-serif;
+  cursor:pointer;color:#fff;
+  background:linear-gradient(135deg,var(--p1),var(--p2),var(--p3));
+  box-shadow:0 8px 30px rgba(176,106,179,0.3);
+  transition:transform 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;
+}
+.l-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.15),transparent)}
+.l-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(176,106,179,0.4)}
+.l-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+.l-err{min-height:20px;color:#ff8080;font-size:13px;font-weight:700;margin-top:10px}
+
+/* ── DASHBOARD ── */
+#dashPage{display:none;min-height:100vh}
+
+/* Sidebar */
+.sidebar{
+  position:fixed;top:0;right:0;bottom:0;width:240px;
+  background:var(--dark2);
+  border-left:1px solid var(--border);
+  z-index:100;display:flex;flex-direction:column;
+  padding:24px 0;
+  transition:transform 0.3s;
+}
+.sidebar-logo{padding:0 24px 24px;border-bottom:1px solid var(--border)}
+.sidebar-logo img{width:120px;height:auto;filter:drop-shadow(0 0 10px rgba(176,106,179,0.3))}
+.sidebar-logo .s-sub{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-top:6px}
+
+.nav{flex:1;padding:20px 12px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 14px;border-radius:12px;
+  font-size:14px;font-weight:600;color:var(--muted);
+  cursor:pointer;transition:all 0.2s;margin-bottom:4px;
+  border:0;background:transparent;width:100%;text-align:right;
+  font-family:'Heebo',sans-serif;
+}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:#fff}
+.nav-item.active{background:linear-gradient(135deg,rgba(123,94,167,0.25),rgba(176,106,179,0.15));color:#fff;border:1px solid rgba(176,106,179,0.2)}
+.nav-icon{font-size:18px;width:24px;text-align:center}
+.nav-badge{margin-right:auto;background:var(--p2);color:#fff;font-size:10px;font-weight:900;padding:2px 7px;border-radius:20px}
+
+.sidebar-footer{padding:16px 24px;border-top:1px solid var(--border)}
+.logout-s{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;cursor:pointer;transition:color 0.2s;background:transparent;border:0;font-family:'Heebo',sans-serif;width:100%}
+.logout-s:hover{color:#ff8080}
+
+/* Main */
+.main{margin-right:240px;min-height:100vh;padding:32px}
+
+/* Top bar */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
+.page-title{font-size:28px;font-weight:900}
+.page-sub{font-size:13px;color:var(--muted);margin-top:3px}
+.topbar-actions{display:flex;gap:10px}
+
+/* Buttons */
+.btn{height:44px;padding:0 20px;border-radius:12px;font-size:14px;font-weight:700;font-family:'Heebo',sans-serif;cursor:pointer;border:0;transition:all 0.2s;display:flex;align-items:center;gap:8px}
+.btn-primary{background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;box-shadow:0 4px 20px rgba(176,106,179,0.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(176,106,179,0.35)}
+.btn-secondary{background:var(--card);border:1px solid var(--border);color:var(--text)}
+.btn-secondary:hover{background:rgba(255,255,255,0.08)}
+.btn-danger{background:rgba(255,80,80,0.1);border:1px solid rgba(255,80,80,0.3);color:#ff8080}
+.btn-danger:hover{background:rgba(255,80,80,0.2)}
+.btn-success{background:rgba(129,199,132,0.1);border:1px solid rgba(129,199,132,0.3);color:var(--p5)}
+.btn-success:hover{background:rgba(129,199,132,0.2)}
+.btn-sm{height:34px;padding:0 14px;font-size:12px}
+
+/* Stats cards */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{
+  background:var(--dark3);border:1px solid var(--border);border-radius:20px;
+  padding:20px;position:relative;overflow:hidden;
+}
+.stat-card::before{content:'';position:absolute;top:-30px;left:-30px;width:100px;height:100px;border-radius:50%;opacity:0.15;filter:blur(20px)}
+.stat-card:nth-child(1)::before{background:var(--p1)}
+.stat-card:nth-child(2)::before{background:var(--p5)}
+.stat-card:nth-child(3)::before{background:var(--p3)}
+.stat-card:nth-child(4)::before{background:var(--p4)}
+.stat-icon{font-size:28px;margin-bottom:10px}
+.stat-num{font-size:36px;font-weight:900;line-height:1}
+.stat-lbl{font-size:12px;color:var(--muted);margin-top:4px;letter-spacing:1px}
+.stat-trend{font-size:11px;margin-top:8px;color:var(--p5)}
+
+/* Table */
+.section-card{background:var(--dark3);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:20px}
+.section-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.section-title{font-size:16px;font-weight:700}
+.search-box{
+  height:38px;padding:0 14px 0 38px;border-radius:10px;
+  border:1px solid var(--border);background:var(--card);
+  color:#fff;font-size:13px;font-family:'Heebo',sans-serif;
+  outline:none;width:220px;transition:border-color 0.2s;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cpath d='m21 21-4.35-4.35'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:10px center;
+}
+.search-box:focus{border-color:var(--p2)}
+.search-box::placeholder{color:rgba(255,255,255,0.2)}
+
+table{width:100%;border-collapse:collapse}
+th{padding:12px 20px;text-align:right;font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;font-weight:600;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border)}
+td{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:14px;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tr:hover td{background:rgba(255,255,255,0.02)}
+
+.status-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.status-pill.active{background:rgba(129,199,132,0.12);color:var(--p5);border:1px solid rgba(129,199,132,0.25)}
+.status-pill.active::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--p5);box-shadow:0 0 6px var(--p5)}
+.status-pill.blocked{background:rgba(255,80,80,0.1);color:#ff8080;border:1px solid rgba(255,80,80,0.2)}
+.status-pill.blocked::before{content:'';width:6px;height:6px;border-radius:50%;background:#ff8080}
+
+.code-badge{background:rgba(123,94,167,0.15);border:1px solid rgba(123,94,167,0.3);border-radius:8px;padding:3px 10px;font-size:13px;font-weight:900;color:var(--p2);letter-spacing:2px;font-family:monospace;direction:ltr;display:inline-block}
+
+.ch-tags{display:flex;flex-wrap:wrap;gap:4px}
+.ch-tag{background:rgba(255,255,255,0.06);border-radius:6px;padding:2px 8px;font-size:11px;color:rgba(255,255,255,0.5)}
+
+.actions-cell{display:flex;gap:6px;align-items:center}
+
+/* ── LOGO CELL ── */
+.client-logo-thumb{
+  width:36px;height:36px;border-radius:8px;
+  object-fit:contain;background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.08);
+  vertical-align:middle;margin-left:10px;
+}
+.client-name-cell{display:flex;align-items:center;gap:0}
+.theme-dots{display:inline-flex;gap:3px;margin-right:8px;vertical-align:middle}
+.theme-dot{width:10px;height:10px;border-radius:50%;display:inline-block;border:1px solid rgba(255,255,255,0.15)}
+
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{
+  background:var(--dark2);border:1px solid rgba(176,106,179,0.2);
+  border-radius:24px;width:520px;max-width:95vw;
+  box-shadow:0 40px 80px rgba(0,0,0,0.6);
+  transform:scale(0.95) translateY(10px);transition:transform 0.3s;
+  max-height:90vh;overflow-y:auto;
+}
+.modal-bg.open .modal{transform:scale(1) translateY(0)}
+.modal-head{padding:24px 28px 0;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:20px;font-weight:900;background:linear-gradient(135deg,var(--p2),var(--p3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.modal-close{background:transparent;border:0;color:var(--muted);font-size:22px;cursor:pointer;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.modal-close:hover{background:rgba(255,255,255,0.08);color:#fff}
+.modal-body{padding:24px 28px}
+.form-group{margin-bottom:18px}
+.form-label{font-size:12px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;display:block}
+.form-control{
+  width:100%;height:48px;border-radius:12px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,0.04);
+  color:#fff;font-size:14px;font-family:'Heebo',sans-serif;
+  padding:0 14px;outline:none;transition:border-color 0.2s;
+}
+.form-control:focus{border-color:var(--p2)}
+.form-control::placeholder{color:rgba(255,255,255,0.2)}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ch-selector{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.ch-btn{
+  height:36px;padding:0 14px;border-radius:10px;
+  border:1px solid var(--border);background:var(--card);
+  color:rgba(255,255,255,0.4);font-size:13px;font-family:'Heebo',sans-serif;
+  cursor:pointer;transition:all 0.2s;
+}
+.ch-btn.sel{border-color:var(--p2);background:rgba(176,106,179,0.15);color:var(--p2)}
+.modal-foot{padding:0 28px 24px;display:flex;gap:10px;justify-content:flex-end}
+
+/* ── LOGO UPLOAD ZONE (inside modal) ── */
+.logo-upload-zone{
+  border:1.5px dashed rgba(176,106,179,0.3);
+  border-radius:14px;padding:16px;
+  text-align:center;cursor:pointer;
+  background:rgba(255,255,255,0.02);
+  transition:border-color 0.2s,background 0.2s;
+  min-height:90px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;
+}
+.logo-upload-zone:hover{border-color:var(--p2);background:rgba(176,106,179,0.05)}
+
+/* ── MINI PLAYER PREVIEW ── */
+.mini-player{
+  border-radius:14px;padding:14px;
+  transition:background 0.4s;
+  background:linear-gradient(135deg,#1a1a2e,#16213e);
+}
+.mini-player-controls{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px}
+.mini-play-btn{
+  width:36px;height:36px;border-radius:50%;border:0;
+  display:flex;align-items:center;justify-content:center;
+  cursor:default;font-size:14px;background:white;transition:background 0.4s;
+}
+.mini-side-btn{
+  width:28px;height:28px;border-radius:50%;border:0;
+  background:rgba(255,255,255,0.12);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;cursor:default;
+}
+.mini-progress{height:3px;border-radius:2px;background:rgba(255,255,255,0.2);margin-top:10px}
+.mini-progress-fill{height:100%;border-radius:2px;width:40%;transition:background 0.4s;background:rgba(255,255,255,0.7)}
+
+/* Theme swatches row */
+.theme-swatch-row{display:flex;gap:6px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.theme-swatch{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,0.15)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-icon{font-size:48px;margin-bottom:14px;opacity:0.5}
+.empty-txt{font-size:15px;font-weight:600}
+.empty-sub{font-size:13px;margin-top:6px;opacity:0.7}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(15,15,22,0.96);border:1px solid rgba(176,106,179,0.35);border-radius:14px;padding:12px 22px;font-size:14px;font-weight:700;color:var(--p2);z-index:999;transition:transform 0.35s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;backdrop-filter:blur(12px)}
+.toast.show{transform:translateX(-50%) translateY(0)}.toast.err{border-color:rgba(255,80,80,0.4);color:#ff8080}
+
+/* Spinner */
+.spin{width:32px;height:32px;border-radius:50%;border:2px solid rgba(176,106,179,0.1);border-top-color:var(--p2);animation:spin 0.8s linear infinite;margin:40px auto;display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Channels view */
+.channels-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:24px}
+.ch-card{background:var(--dark4);border:1px solid var(--border);border-radius:16px;padding:16px;text-align:center;transition:border-color 0.2s}
+.ch-card:hover{border-color:rgba(176,106,179,0.3)}
+.ch-card-icon{font-size:32px;margin-bottom:8px}
+.ch-card-name{font-size:14px;font-weight:700}
+.ch-card-url{font-size:10px;color:var(--muted);margin-top:4px;word-break:break-all;direction:ltr}
+
+/* Responsive */
+@media(max-width:900px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .sidebar{transform:translateX(100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-right:0}
+  .hamburger{display:flex!important}
+}
+.hamburger{display:none;position:fixed;top:16px;right:16px;z-index:101;background:var(--dark3);border:1px solid var(--border);border-radius:10px;width:44px;height:44px;align-items:center;justify-content:center;cursor:pointer;font-size:20px}
+
+/* hidden canvas for color extraction */
+#colorExtractCanvas{display:none}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginPage">
+  <div class="login-card">
+    <div class="login-logo">🎵</div>
+    <div class="login-title">Eiv Music Admin</div>
+    <div class="login-sub">פאנל ניהול מערכת</div>
+    <input id="adminPass" class="l-input" type="password" placeholder="••••" autocomplete="off">
+    <button class="l-btn" onclick="adminLogin()">כניסה למערכת</button>
+    <div id="loginErr" class="l-err"></div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div id="dashPage">
+
+  <button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
+
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="Eiv.jpg" alt="Eiv" onerror="this.style.display='none'">
+      <div class="s-sub">מערכת ניהול</div>
+    </div>
+    <div class="nav">
+      <button class="nav-item active" onclick="showTab('clients')">
+        <span class="nav-icon">👥</span> לקוחות
+        <span class="nav-badge" id="clientsCount">0</span>
+      </button>
+      <button class="nav-item" onclick="showTab('channels')">
+        <span class="nav-icon">🎵</span> ערוצים
+      </button>
+      <button class="nav-item" onclick="showTab('settings')">
+        <span class="nav-icon">⚙️</span> הגדרות
+      </button>
+    </div>
+    <div class="sidebar-footer">
+      <button class="logout-s" onclick="adminLogout()">
+        <span>🚪</span> התנתק
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- ── CLIENTS TAB ── -->
+    <div id="tab-clients">
+      <div class="topbar">
+        <div>
+          <div class="page-title">לקוחות</div>
+          <div class="page-sub">נהל את כל לקוחות המערכת</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-primary" onclick="openAddModal()">
+            ➕ לקוח חדש
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-num" id="statTotal">0</div>
+          <div class="stat-lbl">סה"כ לקוחות</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-num" id="statActive">0</div>
+          <div class="stat-lbl">לקוחות פעילים</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔒</div>
+          <div class="stat-num" id="statBlocked">0</div>
+          <div class="stat-lbl">חסומים</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🎵</div>
+          <div class="stat-num">7</div>
+          <div class="stat-lbl">ערוצי מוזיקה</div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-title">רשימת לקוחות</div>
+          <input class="search-box" id="searchBox" placeholder="חפש לקוח..." oninput="filterClients()">
+        </div>
+        <div id="clientsTable"><div class="spin"></div></div>
+      </div>
+    </div>
+
+    <!-- ── CHANNELS TAB ── -->
+    <div id="tab-channels" style="display:none">
+      <div class="topbar">
+        <div>
+          <div class="page-title">ערוצי מוזיקה</div>
+          <div class="page-sub">כל ערוצי הסטרימינג הפעילים</div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="channels-grid" id="channelsGrid"></div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS TAB ── -->
+    <div id="tab-settings" style="display:none">
+      <div class="topbar">
+        <div>
+          <div class="page-title">הגדרות</div>
+          <div class="page-sub">הגדרות המערכת</div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-head"><div class="section-title">קישורים מהירים</div></div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:12px">
+          <a href="https://app.eiv-music.com" target="_blank" class="btn btn-secondary" style="text-decoration:none;width:fit-content">🌐 פתח אפליקציית לקוח</a>
+          <a href="https://supabase.com" target="_blank" class="btn btn-secondary" style="text-decoration:none;width:fit-content">🗄️ פתח Supabase</a>
+          <a href="http://79.143.176.78/dashboard" target="_blank" class="btn btn-secondary" style="text-decoration:none;width:fit-content">📻 פתח AzuraCast</a>
+        </div>
+      </div>
+      <div class="section-card" style="margin-top:16px">
+        <div class="section-head"><div class="section-title">פרטי מערכת</div></div>
+        <div style="padding:24px">
+          <table>
+            <tr><td style="color:var(--muted);width:180px">כתובת אפליקציה</td><td><code style="color:var(--p4)">https://app.eiv-music.com</code></td></tr>
+            <tr><td style="color:var(--muted)">כתובת סטרימינג</td><td><code style="color:var(--p4)">https://eiv-music.com/listen/</code></td></tr>
+            <tr><td style="color:var(--muted)">מסד נתונים</td><td><code style="color:var(--p4)">Supabase</code></td></tr>
+            <tr><td style="color:var(--muted)">אחסון אתר</td><td><code style="color:var(--p4)">Netlify</code></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══ ADD/EDIT MODAL ══ -->
+<div class="modal-bg" id="clientModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">לקוח חדש</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId">
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">שם העסק</label>
+          <input class="form-control" id="fName" placeholder="לדוגמה: קפה רוטשילד">
+        </div>
+        <div class="form-group">
+          <label class="form-label">קוד כניסה</label>
+          <div style="display:flex;gap:8px">
+            <input class="form-control" id="fCode" placeholder="1234" maxlength="8" style="direction:ltr;letter-spacing:4px;font-weight:900">
+            <button class="btn btn-secondary" onclick="genCode()" style="flex-shrink:0;height:48px;padding:0 12px;font-size:18px" title="צור קוד אוטומטי">🎲</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">טלפון (אופציונלי)</label>
+        <input class="form-control" id="fPhone" placeholder="05X-XXXXXXX" type="tel">
+      </div>
+
+      <!-- ══ LOGO + THEME SECTION ══ -->
+      <div class="form-group">
+        <label class="form-label">לוגו ועיצוב נגן</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start">
+
+          <!-- Upload zone -->
+          <div>
+            <div class="logo-upload-zone" id="logoUploadZone" onclick="document.getElementById('logoFileInput').click()">
+              <input type="file" id="logoFileInput" accept="image/*" style="display:none">
+              <div id="logoUploadPlaceholder">
+                <div style="font-size:26px">🖼️</div>
+                <div style="font-size:12px;color:var(--muted)">לחץ להעלאת לוגו</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.2)">PNG / JPG / SVG</div>
+              </div>
+              <div id="logoUploadPreview" style="display:none;flex-direction:column;align-items:center;gap:6px">
+                <img id="logoPreviewImg" style="max-width:90px;max-height:54px;border-radius:8px;object-fit:contain">
+                <div style="font-size:10px;color:var(--muted)">לחץ להחלפה</div>
+              </div>
+            </div>
+            <!-- Extracted swatches -->
+            <div id="themeSwatchRow" style="display:none;margin-top:8px">
+              <div style="font-size:10px;color:var(--muted);margin-bottom:5px;letter-spacing:1px;text-transform:uppercase">צבעים שחולצו</div>
+              <div class="theme-swatch-row" id="themeSwatches"></div>
+            </div>
+          </div>
+
+          <!-- Mini player preview -->
+          <div>
+            <div style="font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase">תצוגה מקדימה</div>
+            <div class="mini-player" id="miniPlayer">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <div id="miniAlbumArt" style="width:32px;height:32px;border-radius:6px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:14px;flex-shrink:0">🎵</div>
+                <div>
+                  <div style="font-size:11px;font-weight:700;color:white">שם השיר</div>
+                  <div style="font-size:10px;color:rgba(255,255,255,0.5)">האמן</div>
+                </div>
+              </div>
+              <div class="mini-progress"><div class="mini-progress-fill" id="miniProgressFill"></div></div>
+              <div class="mini-player-controls">
+                <div class="mini-side-btn">⏮</div>
+                <div class="mini-play-btn" id="miniPlayBtn">▶</div>
+                <div class="mini-side-btn">⏭</div>
+              </div>
+            </div>
+            <div id="noLogoHint" style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:6px;text-align:center">העלה לוגו לתצוגה מקדימה</div>
+          </div>
+
+        </div>
+      </div>
+      <!-- ══ END LOGO SECTION ══ -->
+
+      <div class="form-group">
+        <label class="form-label">ערוצי מוזיקה</label>
+        <div class="ch-selector" id="modalChSel"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ערוץ ברירת מחדל</label>
+        <select class="form-control" id="fDefault" style="cursor:pointer"></select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="exportClientJson()" id="exportJsonBtn" style="display:none">📤 ייצא JSON</button>
+      <button class="btn btn-secondary" onclick="closeModal()">ביטול</button>
+      <button class="btn btn-primary" id="saveBtn" onclick="saveClient()">💾 שמור לקוח</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<canvas id="colorExtractCanvas"></canvas>
+
+<script>
+const SUPABASE_URL = "https://lhnjxtwmngfsetgzqjts.supabase.co";
+const SUPABASE_KEY = "sb_publishable_9nbM2jActQcpUhPzUemOVA_z2R0TRJd";
+const ADMIN_PASSWORD = "ADMIN2024";
+
+const CHANNELS = {
+  pop:     {label:"פופ",       icon:"🎵", stream:"https://eiv-music.com/listen/pop/radio.mp3"},
+  kizvi:   {label:"קצבי",      icon:"⚡", stream:"https://eiv-music.com/listen/kizvi/radio.mp3"},
+  jazz:    {label:"ג׳אז",      icon:"🎷", stream:"https://eiv-music.com/listen/jazz/radio.mp3"},
+  israeli: {label:"ישראלי",    icon:"🇮🇱", stream:"https://eiv-music.com/listen/israeli/radio.mp3"},
+  mizrahi: {label:"מזרחי",     icon:"🌙", stream:"https://eiv-music.com/listen/mizrahi/radio.mp3"},
+  hiphop:  {label:"היפ הופ",   icon:"🎧", stream:"https://eiv-music.com/listen/hiphop/radio.mp3"},
+  cafe:    {label:"רגוע",      icon:"☕", stream:"https://eiv-music.com/listen/cafe/radio.mp3"}
+};
+
+let allClients = [];
+let currentLogoData = null;   // base64 of resized logo
+let currentTheme   = null;    // { bgFrom, bgTo, btnColor, btnText, accent, palette }
+const $ = id => document.getElementById(id);
+
+// ══════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════
+function adminLogin(){
+  const pass = $("adminPass").value.trim().toUpperCase();
+  if(pass !== ADMIN_PASSWORD){ $("loginErr").textContent = "סיסמה שגויה ❌"; return; }
+  $("loginPage").style.display = "none";
+  $("dashPage").style.display = "block";
+  loadClients();
+  buildChannelsGrid();
+}
+$("adminPass").addEventListener("keydown", e => { if(e.key==="Enter") adminLogin(); });
+
+function adminLogout(){
+  $("dashPage").style.display = "none";
+  $("loginPage").style.display = "flex";
+  $("adminPass").value = "";
+}
+
+// ══════════════════════════════════════════════
+// SUPABASE
+// ══════════════════════════════════════════════
+async function sbFetch(path, opts={}){
+  const res = await fetch(SUPABASE_URL + "/rest/v1/" + path, {
+    headers:{
+      "apikey": SUPABASE_KEY,
+      "Authorization": "Bearer " + SUPABASE_KEY,
+      "Content-Type": "application/json",
+      "Prefer": opts.prefer || "return=representation",
+      ...opts.headers
+    }, ...opts
+  });
+  if(!res.ok){ const e = await res.json().catch(()=>({})); throw new Error(e.message || res.statusText); }
+  return res.status === 204 ? null : res.json();
+}
+
+// ══════════════════════════════════════════════
+// CLIENTS
+// ══════════════════════════════════════════════
+async function loadClients(){
+  $("clientsTable").innerHTML = '<div class="spin"></div>';
+  try{
+    allClients = await sbFetch("clients?select=*&order=name.asc") || [];
+    renderClients(allClients);
+    updateStats();
+  }catch(e){
+    $("clientsTable").innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-txt">שגיאה בטעינה</div><div class="empty-sub">${e.message}</div></div>`;
+  }
+}
+
+function updateStats(){
+  const active = allClients.filter(c=>c.active).length;
+  $("statTotal").textContent = allClients.length;
+  $("statActive").textContent = active;
+  $("statBlocked").textContent = allClients.length - active;
+  $("clientsCount").textContent = allClients.length;
+}
+
+function filterClients(){
+  const q = $("searchBox").value.trim().toLowerCase();
+  const filtered = q ? allClients.filter(c =>
+    c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q)
+  ) : allClients;
+  renderClients(filtered);
+}
+
+function renderClients(clients){
+  if(!clients.length){
+    $("clientsTable").innerHTML = `<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-txt">אין לקוחות עדיין</div><div class="empty-sub">לחץ על "לקוח חדש" להוסיף</div></div>`;
+    return;
+  }
+  const chLabels = c => c.channels
+    ? c.channels.split(",").map(k => `<span class="ch-tag">${CHANNELS[k.trim()]?.icon||''} ${CHANNELS[k.trim()]?.label||k}</span>`).join("")
+    : '<span class="ch-tag">כל הערוצים</span>';
+
+  const logoCell = c => c.logo_data
+    ? `<img src="${c.logo_data}" class="client-logo-thumb" alt="">`
+    : `<span style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:16px;margin-left:10px">🏢</span>`;
+
+  const themeDots = c => {
+    if(!c.theme) return '';
+    try {
+      const t = typeof c.theme === 'string' ? JSON.parse(c.theme) : c.theme;
+      return `<span class="theme-dots">${(t.palette||[]).slice(0,3).map(col=>`<span class="theme-dot" style="background:${col}"></span>`).join('')}</span>`;
+    } catch(e){ return ''; }
+  };
+
+  $("clientsTable").innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>שם העסק</th>
+          <th>קוד כניסה</th>
+          <th>ערוצים</th>
+          <th>סטטוס</th>
+          <th>פעולות</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${clients.map(c => `
+          <tr>
+            <td>
+              <div class="client-name-cell">
+                ${logoCell(c)}
+                <div>
+                  <strong>${c.name||'—'}</strong>
+                  ${themeDots(c)}
+                  ${c.phone?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${c.phone}</div>`:''}
+                </div>
+              </div>
+            </td>
+            <td><span class="code-badge">${c.code}</span></td>
+            <td><div class="ch-tags">${chLabels(c)}</div></td>
+            <td><span class="status-pill ${c.active?'active':'blocked'}">${c.active?'פעיל':'חסום'}</span></td>
+            <td>
+              <div class="actions-cell">
+                <button class="btn btn-secondary btn-sm" onclick="openEditModal('${c.code}')">✏️ עריכה</button>
+                <button class="btn ${c.active?'btn-danger':'btn-success'} btn-sm" onclick="toggleClient('${c.code}',${!c.active})">
+                  ${c.active?'🔒 חסום':'✅ פתח'}
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.code}','${c.name}')">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>`;
+}
+
+async function toggleClient(code, active){
+  try{
+    await sbFetch(`clients?code=eq.${encodeURIComponent(code)}`,{method:"PATCH",body:JSON.stringify({active}),prefer:"return=minimal"});
+    showToast(active ? "✅ לקוח הופעל" : "🔒 לקוח נחסם");
+    loadClients();
+  }catch(e){ showToast("שגיאה: "+e.message, true); }
+}
+
+async function deleteClient(code, name){
+  if(!confirm(`למחוק את הלקוח "${name}"?`)) return;
+  try{
+    await sbFetch(`clients?code=eq.${encodeURIComponent(code)}`,{method:"DELETE",prefer:"return=minimal"});
+    showToast("🗑️ לקוח נמחק");
+    loadClients();
+  }catch(e){ showToast("שגיאה: "+e.message, true); }
+}
+
+// ══════════════════════════════════════════════
+// COLOR EXTRACTION
+// ══════════════════════════════════════════════
+function colorDarken([r,g,b], f){ return [Math.round(r*f),Math.round(g*f),Math.round(b*f)]; }
+function colorLighten([r,g,b], f){ return [Math.min(255,Math.round(r+(255-r)*f)),Math.min(255,Math.round(g+(255-g)*f)),Math.min(255,Math.round(b+(255-b)*f))]; }
+function colorIsLight([r,g,b]){ return (r*0.299+g*0.587+b*0.114) > 140; }
+
+function extractColorsFromImg(img){
+  const canvas = $("colorExtractCanvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = 80; canvas.height = 80;
+  ctx.drawImage(img, 0, 0, 80, 80);
+  const data = ctx.getImageData(0, 0, 80, 80).data;
+
+  const buckets = {};
+  for(let i=0;i<data.length;i+=4){
+    const r=data[i],g=data[i+1],b=data[i+2],a=data[i+3];
+    if(a<128) continue;
+    const br=(r+g+b)/3;
+    if(br>245||br<10) continue;
+    const key=`${Math.round(r/20)*20},${Math.round(g/20)*20},${Math.round(b/20)*20}`;
+    buckets[key]=(buckets[key]||0)+1;
+  }
+  const sorted=Object.entries(buckets).sort((a,b)=>b[1]-a[1]);
+  const palette=[];
+  for(const [key] of sorted){
+    const [r,g,b]=key.split(',').map(Number);
+    const tooClose=palette.some(c=>Math.abs(c[0]-r)+Math.abs(c[1]-g)+Math.abs(c[2]-b)<80);
+    if(!tooClose) palette.push([r,g,b]);
+    if(palette.length>=4) break;
+  }
+  while(palette.length<3) palette.push([100,100,100]);
+
+  const bg    = colorDarken(palette[0], 0.55);
+  const bg2   = colorDarken(palette[1]||palette[0], 0.4);
+  const btn   = colorLighten(palette[0], 0.7);
+  const btnTxt = colorIsLight(btn) ? '#111111' : '#ffffff';
+  const accent = colorLighten(palette[2]||palette[0], 0.85);
+
+  return {
+    bgFrom:  `rgb(${bg.join(',')})`,
+    bgTo:    `rgb(${bg2.join(',')})`,
+    btnColor:`rgb(${btn.join(',')})`,
+    btnText: btnTxt,
+    accent:  `rgb(${accent.join(',')})`,
+    palette: palette.map(c=>`rgb(${c.join(',')})`)
+  };
+}
+
+// Resize image to max 200px and return base64
+function resizeLogoToBase64(img, maxSize=200){
+  const canvas = document.createElement('canvas');
+  const ratio = Math.min(maxSize/img.naturalWidth, maxSize/img.naturalHeight, 1);
+  canvas.width  = Math.round(img.naturalWidth  * ratio);
+  canvas.height = Math.round(img.naturalHeight * ratio);
+  canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL('image/png');
+}
+
+function applyThemeToMiniPlayer(theme){
+  $("miniPlayer").style.background = `linear-gradient(135deg,${theme.bgFrom},${theme.bgTo})`;
+  $("miniPlayBtn").style.background = theme.btnColor;
+  $("miniPlayBtn").style.color      = theme.btnText;
+  $("miniProgressFill").style.background = theme.accent;
+}
+
+// Logo file input handler
+$("logoFileInput").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      // resize + store
+      currentLogoData = resizeLogoToBase64(img);
+      currentTheme    = extractColorsFromImg(img);
+
+      // update upload zone
+      $("logoPreviewImg").src = currentLogoData;
+      $("logoUploadPlaceholder").style.display = "none";
+      $("logoUploadPreview").style.display     = "flex";
+
+      // update mini player
+      $("miniAlbumArt").innerHTML = `<img src="${currentLogoData}" style="width:32px;height:32px;object-fit:contain;border-radius:5px">`;
+      applyThemeToMiniPlayer(currentTheme);
+      $("noLogoHint").style.display = "none";
+
+      // show swatches
+      $("themeSwatchRow").style.display = "block";
+      $("themeSwatches").innerHTML = currentTheme.palette.map(c=>
+        `<span class="theme-swatch" style="background:${c}"></span>`
+      ).join('');
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+// ══════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════
+function buildModalChSel(selected=[], def=''){
+  const sel    = $("modalChSel");
+  const defSel = $("fDefault");
+  sel.innerHTML = ""; defSel.innerHTML = "";
+  Object.entries(CHANNELS).forEach(([k,ch])=>{
+    const b = document.createElement("button");
+    b.className = "ch-btn" + (selected.includes(k)?" sel":"");
+    b.dataset.key = k;
+    b.textContent = ch.icon+" "+ch.label;
+    b.onclick = ()=>{ b.classList.toggle("sel"); rebuildDefault(); };
+    sel.appendChild(b);
+    const opt = document.createElement("option");
+    opt.value=k; opt.textContent=ch.icon+" "+ch.label;
+    if(k===def) opt.selected=true;
+    defSel.appendChild(opt);
+  });
+}
+
+function rebuildDefault(){
+  const sel    = [...document.querySelectorAll(".ch-btn.sel")].map(b=>b.dataset.key);
+  const defSel = $("fDefault");
+  const cur    = defSel.value;
+  defSel.innerHTML = "";
+  sel.forEach(k=>{
+    const opt = document.createElement("option");
+    opt.value=k; opt.textContent=CHANNELS[k].icon+" "+CHANNELS[k].label;
+    if(k===cur) opt.selected=true;
+    defSel.appendChild(opt);
+  });
+}
+
+function resetLogoSection(){
+  currentLogoData = null;
+  currentTheme    = null;
+  $("logoFileInput").value = "";
+  $("logoPreviewImg").src  = "";
+  $("logoUploadPlaceholder").style.display = "flex";
+  $("logoUploadPreview").style.display     = "none";
+  $("themeSwatchRow").style.display        = "none";
+  $("themeSwatches").innerHTML             = "";
+  $("miniPlayer").style.background         = "linear-gradient(135deg,#1a1a2e,#16213e)";
+  $("miniPlayBtn").style.background        = "white";
+  $("miniPlayBtn").style.color             = "#111";
+  $("miniProgressFill").style.background   = "rgba(255,255,255,0.7)";
+  $("miniAlbumArt").innerHTML              = "🎵";
+  $("noLogoHint").style.display            = "block";
+}
+
+function openAddModal(){
+  $("modalTitle").textContent = "לקוח חדש";
+  $("editId").value = "";
+  $("fName").value  = "";
+  $("fCode").value  = "";
+  $("fPhone").value = "";
+  $("exportJsonBtn").style.display = "none";
+  resetLogoSection();
+  buildModalChSel(Object.keys(CHANNELS), "pop");
+  rebuildDefault();
+  $("clientModal").classList.add("open");
+}
+
+function openEditModal(code){
+  const c = allClients.find(x=>x.code===code);
+  if(!c) return;
+  $("modalTitle").textContent = "עריכת לקוח";
+  $("editId").value  = c.id || "";
+  $("fName").value   = c.name  || "";
+  $("fCode").value   = c.code  || "";
+  $("fPhone").value  = c.phone || "";
+  $("exportJsonBtn").style.display = "flex";
+  resetLogoSection();
+
+  // restore saved logo + theme if exists
+  if(c.logo_data){
+    currentLogoData = c.logo_data;
+    $("logoPreviewImg").src = c.logo_data;
+    $("logoUploadPlaceholder").style.display = "none";
+    $("logoUploadPreview").style.display     = "flex";
+    $("miniAlbumArt").innerHTML = `<img src="${c.logo_data}" style="width:32px;height:32px;object-fit:contain;border-radius:5px">`;
+    $("noLogoHint").style.display = "none";
+  }
+  if(c.theme){
+    try{
+      currentTheme = typeof c.theme==='string' ? JSON.parse(c.theme) : c.theme;
+      applyThemeToMiniPlayer(currentTheme);
+      $("themeSwatchRow").style.display = "block";
+      $("themeSwatches").innerHTML = (currentTheme.palette||[]).map(col=>
+        `<span class="theme-swatch" style="background:${col}"></span>`
+      ).join('');
+    }catch(e){}
+  }
+
+  const chs = c.channels ? c.channels.split(",").map(x=>x.trim()) : Object.keys(CHANNELS);
+  buildModalChSel(chs, c.default_channel||chs[0]);
+  rebuildDefault();
+  $("clientModal").classList.add("open");
+}
+
+function closeModal(){ $("clientModal").classList.remove("open"); }
+function genCode(){ $("fCode").value = Math.random().toString(36).substring(2,6).toUpperCase(); }
+
+// ══════════════════════════════════════════════
+// SAVE CLIENT
+// ══════════════════════════════════════════════
+async function saveClient(){
+  const name   = $("fName").value.trim();
+  const code   = $("fCode").value.trim().toUpperCase();
+  const phone  = $("fPhone").value.trim();
+  const sel    = [...document.querySelectorAll(".ch-btn.sel")].map(b=>b.dataset.key);
+  const def    = $("fDefault").value;
+  const editId = $("editId").value;
+
+  if(!name){  showToast("הכנס שם עסק", true); return; }
+  if(!code){  showToast("הכנס קוד", true);    return; }
+  if(!sel.length){ showToast("בחר ערוץ אחד לפחות", true); return; }
+
+  const btn = $("saveBtn");
+  btn.disabled = true; btn.textContent = "שומר...";
+
+  const payload = {
+    code,
+    name,
+    channels: sel.join(","),
+    active: true,
+    default_channel: def,
+    ...(phone && { phone }),
+    ...(currentLogoData && { logo_data: currentLogoData }),
+    ...(currentTheme    && { theme: currentTheme })
+  };
+
+  try{
+    if(editId){
+      await sbFetch(`clients?id=eq.${editId}`,{method:"PATCH",body:JSON.stringify(payload),prefer:"return=minimal"});
+      showToast("✅ לקוח עודכן!");
+    } else {
+      payload.id = crypto.randomUUID();
+      await sbFetch("clients",{method:"POST",body:JSON.stringify(payload),prefer:"return=representation"});
+      showToast("✅ לקוח נוסף!");
+    }
+    closeModal();
+    loadClients();
+  }catch(e){ showToast("שגיאה: "+e.message, true); }
+  finally{ btn.disabled=false; btn.textContent="💾 שמור לקוח"; }
+}
+
+// ══════════════════════════════════════════════
+// EXPORT JSON
+// ══════════════════════════════════════════════
+function exportClientJson(){
+  const editId = $("editId").value;
+  const c = allClients.find(x=>x.id===editId);
+  if(!c) return;
+
+  const theme = currentTheme || (c.theme ? (typeof c.theme==='string'?JSON.parse(c.theme):c.theme) : null);
+  const exportObj = {
+    client:    c.name,
+    code:      c.code,
+    createdAt: new Date().toISOString(),
+    channels:  c.channels,
+    theme: theme ? {
+      bgFrom:   theme.bgFrom,
+      bgTo:     theme.bgTo,
+      btnColor: theme.btnColor,
+      btnText:  theme.btnText,
+      accent:   theme.accent
+    } : null,
+    palette: theme?.palette || [],
+    cssVariables: theme ? `
+:root {
+  --player-bg-from:   ${theme.bgFrom};
+  --player-bg-to:     ${theme.bgTo};
+  --player-btn-color: ${theme.btnColor};
+  --player-btn-text:  ${theme.btnText};
+  --player-accent:    ${theme.accent};
+}` : null
+  };
+
+  const blob = new Blob([JSON.stringify(exportObj,null,2)],{type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `${c.name.replace(/\s+/g,'_')}_theme.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("📤 JSON הורד בהצלחה");
+}
+
+// ══════════════════════════════════════════════
+// CHANNELS TAB
+// ══════════════════════════════════════════════
+function buildChannelsGrid(){
+  const g = $("channelsGrid");
+  g.innerHTML = Object.entries(CHANNELS).map(([k,ch])=>`
+    <div class="ch-card">
+      <div class="ch-card-icon">${ch.icon}</div>
+      <div class="ch-card-name">${ch.label}</div>
+      <div class="ch-card-url">${ch.stream}</div>
+    </div>
+  `).join("");
+}
+
+// ══════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════
+function showTab(tab){
+  ["clients","channels","settings"].forEach(t=>{
+    $("tab-"+t).style.display = t===tab ? "block" : "none";
+  });
+  document.querySelectorAll(".nav-item").forEach((btn,i)=>{
+    btn.classList.toggle("active", ["clients","channels","settings"][i]===tab);
+  });
+  if(window.innerWidth<=900) $("sidebar").classList.remove("open");
+}
+
+function toggleSidebar(){ $("sidebar").classList.toggle("open"); }
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function showToast(msg, isErr=false){
+  const t = $("toast");
+  t.textContent = msg;
+  t.className = "toast"+(isErr?" err":"");
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 3000);
+}
+
+$("clientModal").addEventListener("click", e => {
+  if(e.target===$("clientModal")) closeModal();
+});
+</script>
+</body>
+</html>
