@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<!-- saved from url=(0028)https://radio.eiv-music.com/ -->
+<html lang="he" dir="rtl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Eiv Music — ניהול לקוחות</title>
+<link href="./Eiv Music — ניהול לקוחות-סטרימר_files/css2" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f6fb;--white:#fff;--blue:#4a6cf7;--blue2:#6c8aff;
+  --blue-l:#eef1fd;--text:#1a1d2e;--text2:#6b7280;--text3:#9ca3af;
+  --border:#e8eaf0;--red:#ef4444;--red-l:#fef2f2;
+  --green:#10b981;--green-l:#ecfdf5;
+  --shadow:0 2px 16px rgba(74,108,247,0.08);--r:16px;--rs:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--text);font-family:'Heebo',sans-serif;min-height:100vh}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* LOGIN */
+#loginScreen{background:linear-gradient(160deg,#08080f 0%,#1a0a2e 100%);align-items:center;justify-content:center;padding:40px 24px}
+.login-box{background:rgba(255,255,255,0.05);border:1px solid rgba(176,106,179,0.25);border-radius:24px;padding:36px 28px;width:100%;max-width:400px;backdrop-filter:blur(20px)}
+.login-logo{font-size:52px;font-weight:900;background:linear-gradient(135deg,#b06ab3,#7b5ea7,#e0a96d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:4px}
+.login-sub{font-size:12px;letter-spacing:4px;color:rgba(255,255,255,0.3);text-align:center;text-transform:uppercase;margin-bottom:28px}
+.inp{width:100%;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:var(--rs);color:#fff;font-size:15px;font-family:'Heebo',sans-serif;padding:13px 16px;outline:none;transition:border-color .2s;direction:rtl;margin-bottom:12px}
+.inp:focus{border-color:rgba(176,106,179,0.6)}
+.inp::placeholder{color:rgba(255,255,255,0.25)}
+.btn-primary{display:flex;align-items:center;justify-content:center;width:100%;padding:15px;border-radius:var(--r);border:0;background:linear-gradient(135deg,#b06ab3,#7b5ea7);color:#fff;font-size:15px;font-weight:800;font-family:'Heebo',sans-serif;cursor:pointer;box-shadow:0 6px 24px rgba(176,106,179,0.3);transition:opacity .2s}
+.btn-primary:active{opacity:.85}
+.login-err{color:#ef4444;font-size:13px;text-align:center;margin-top:10px;font-weight:600}
+
+/* TOPBAR */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(74,108,247,0.06)}
+.topbar-logo{font-size:20px;font-weight:900;background:linear-gradient(135deg,#b06ab3,#7b5ea7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-sub{font-size:11px;color:var(--text3);letter-spacing:1px}
+
+/* LAYOUT */
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:220px;background:var(--white);border-left:1px solid var(--border);padding:16px 0;flex-shrink:0;overflow-y:auto}
+.main{flex:1;overflow-y:auto;padding:28px;background:var(--bg)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 18px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text2);transition:all .2s;border-right:3px solid transparent}
+.nav-item:hover{background:var(--blue-l);color:var(--blue)}
+.nav-item.active{background:var(--blue-l);color:var(--blue);border-right-color:var(--blue)}
+.nav-icon{font-size:18px;width:24px;text-align:center}
+.nav-section{font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;padding:16px 18px 6px;font-weight:700}
+
+/* CARDS */
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:20px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.stat{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;text-align:center}
+.stat-num{font-size:32px;font-weight:900;color:var(--blue)}
+.stat-lbl{font-size:12px;color:var(--text3);margin-top:4px;font-weight:600}
+
+/* PAGE HEADER */
+.page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.page-title{font-size:22px;font-weight:800}
+.page-sub{font-size:13px;color:var(--text3);margin-top:2px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:var(--rs);border:0;font-size:13px;font-weight:700;font-family:'Heebo',sans-serif;cursor:pointer;transition:opacity .2s}
+.btn:active{opacity:.82}
+.btn-blue{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 4px 16px rgba(74,108,247,0.25)}
+.btn-red{background:var(--red-l);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.btn-green{background:var(--green-l);color:var(--green);border:1px solid rgba(16,185,129,.2)}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text2)}
+.btn-sm{padding:6px 12px;font-size:12px}
+
+/* CLIENT CARD */
+.client-card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;margin-bottom:12px;border-right:4px solid #b06ab3}
+.client-name{font-size:17px;font-weight:800;margin-bottom:6px}
+.client-stream{font-size:12px;color:var(--text3);margin-bottom:10px;word-break:break-all}
+.client-link-box{background:var(--bg);border-radius:var(--rs);padding:10px 14px;margin-top:10px}
+.client-link-label{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px}
+.client-link{font-size:12px;color:var(--blue);word-break:break-all;margin-bottom:8px}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700}
+.badge-green{background:var(--green-l);color:var(--green)}
+.badge-red{background:var(--red-l);color:var(--red)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:20px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-size:18px;font-weight:800}
+.modal-close{width:32px;height:32px;border-radius:var(--rs);border:1px solid var(--border);background:transparent;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.field{margin-bottom:14px}
+.field label{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;display:block}
+.finp{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:14px;font-family:'Heebo',sans-serif;padding:11px 14px;outline:none;transition:border-color .2s;direction:rtl}
+.finp:focus{border-color:var(--blue);background:var(--white)}
+.finp::placeholder{color:var(--text3)}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);border-radius:12px;padding:11px 22px;font-size:13px;font-weight:600;color:#fff;z-index:999;opacity:0;transition:all .28s;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:700px){
+  .sidebar{display:none;position:fixed;inset:0;z-index:100;width:240px;right:0;left:auto}
+  .sidebar.open{display:flex}
+  .stat-grid{grid-template-columns:1fr 1fr}
+}
+.menu-btn{display:none;width:36px;height:36px;border-radius:var(--rs);border:1px solid var(--border);background:transparent;cursor:pointer;align-items:center;justify-content:center;font-size:18px}
+@media(max-width:700px){.menu-btn{display:flex!important}}
+.sidebar-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:99}
+.sidebar-ov.open{display:block}
+</style>
+</head>
+<body>
+<div id="toast" class="">✓ לקוח נוסף! לינק: /player.html?id=httpsstreameiv-musiccomlistenpophitsradiomp3</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="mo">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title" id="mt">+ הוסף לקוח</div>
+      <button class="modal-close" onclick="cm()">✕</button>
+    </div>
+    <div id="mbody"><div class="field"><label>שם הלקוח / עסק</label><input class="finp" id="cName" value="" placeholder="בית קפה דוד"></div><div class="field"><label>קוד ייחודי (לURL — אנגלית בלבד)</label><input class="finp" id="cId" value="" placeholder="coffeeshop1"><div style="font-size:11px;color:var(--text3);margin-top:3px">אותיות ומספרים בלבד, ללא רווחים</div></div><div class="field"><label>לינק סטרים AzuraCast</label><input class="finp" id="cStream" value="" placeholder="http://79.143.176.78/listen/pop/radio.mp3"></div><div class="field"><label>לוגו URL (אופציונלי)</label><input class="finp" id="cLogo" value="" placeholder="https://..."></div><div style="display:flex;gap:10px;margin-top:18px"><button class="btn btn-outline" onclick="cm()" style="flex:0 0 80px">ביטול</button><button class="btn btn-blue" style="flex:1" onclick="saveClient()">הוסף ←</button></div></div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="screen">
+  <div class="login-box">
+    <div class="login-logo">Eiv</div>
+    <div class="login-sub">Music Management</div>
+    <input class="inp" id="pwInput" type="password" placeholder="סיסמת מנהל" onkeydown="if(event.key===&#39;Enter&#39;)doLogin()">
+    <button class="btn-primary" onclick="doLogin()">כניסה למערכת</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="mainScreen" class="screen active">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <div>
+        <div class="topbar-logo">Eiv Music</div>
+        <div class="topbar-sub">ניהול לקוחות מוזיקה</div>
+      </div>
+    </div>
+    <button onclick="doLogout()" style="padding:7px 16px;border-radius:var(--rs);border:1px solid var(--border);background:transparent;color:var(--red);font-size:12px;font-weight:700;font-family:&#39;Heebo&#39;,sans-serif;cursor:pointer">יציאה</button>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar" id="sidebar">
+      <div class="nav-section">ניהול</div>
+      <div class="nav-item active" id="nav-clients" onclick="goPage(&#39;clients&#39;)"><span class="nav-icon">🎵</span>לקוחות</div>
+      <div class="nav-item" id="nav-settings" onclick="goPage(&#39;settings&#39;)"><span class="nav-icon">⚙️</span>הגדרות</div>
+    </div>
+    <div class="sidebar-ov" id="sidebarOv" onclick="toggleSidebar()"></div>
+    <div class="main" id="mainContent"><div class="page-hdr"><div><div class="page-title">🎵 לקוחות מוזיקה</div><div class="page-sub">2 לקוחות · כל לקוח מקבל לינק ייחודי לסטרימר</div></div><button class="btn btn-blue" onclick="openAddClient()">+ הוסף לקוח</button></div><div class="stat-grid"><div class="stat"><div class="stat-num">2</div><div class="stat-lbl">סה"כ לקוחות</div></div><div class="stat"><div class="stat-num" style="color:var(--green)">2</div><div class="stat-lbl">פעילים</div></div><div class="stat"><div class="stat-num" style="color:var(--red)">0</div><div class="stat-lbl">מושהים</div></div></div><div style="background:#eef1fd;border-radius:var(--r);padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--blue)">💡 <strong>איך עובד:</strong> הוסף לקוח + לינק AzuraCast ← קבל לינק ← שים בסטרימר ← מנגן לבד אוטומטית</div><div class="client-card" style="border-right-color:#b06ab3"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px"><div><div class="client-name">חומוס אליהו הרצליה</div><div class="client-stream">🎵 https://stream.eiv-music.com/listen/pop/radio.mp3</div></div><span class="badge badge-green">פעיל</span></div><div class="client-link-box"><div class="client-link-label">🔗 לינק לסטרימר</div><div class="client-link">https://radio.eiv-music.com/player.html?id=12345</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" data-link="https://radio.eiv-music.com/player.html?id=12345" onclick="copyLink(this)">📋 העתק לינק</button><a href="https://radio.eiv-music.com/player.html?id=12345" target="_blank" class="btn btn-sm btn-green" style="text-decoration:none">▶️ בדוק</a></div></div><div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-sm btn-outline" data-id="12345" onclick="openEditClient(this.dataset.id)">✏️ ערוך</button><button class="btn btn-sm btn-red" data-id="12345" onclick="toggleClient(this.dataset.id)">⏸ השהה</button><button class="btn btn-sm btn-red" data-id="12345" onclick="delClient(this.dataset.id)">🗑</button></div></div><div class="client-card" style="border-right-color:#b06ab3"><div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px"><div><div class="client-name">חומוס אליהו הרצליה</div><div class="client-stream">🎵 https://stream.eiv-music.com/listen/pophits/radio.mp3</div></div><span class="badge badge-green">פעיל</span></div><div class="client-link-box"><div class="client-link-label">🔗 לינק לסטרימר</div><div class="client-link">https://radio.eiv-music.com/player.html?id=httpsstreameiv-musiccomlistenpophitsradiomp3</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" data-link="https://radio.eiv-music.com/player.html?id=httpsstreameiv-musiccomlistenpophitsradiomp3" onclick="copyLink(this)">📋 העתק לינק</button><a href="https://radio.eiv-music.com/player.html?id=httpsstreameiv-musiccomlistenpophitsradiomp3" target="_blank" class="btn btn-sm btn-green" style="text-decoration:none">▶️ בדוק</a></div></div><div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-sm btn-outline" data-id="httpsstreameiv-musiccomlistenpophitsradiomp3" onclick="openEditClient(this.dataset.id)">✏️ ערוך</button><button class="btn btn-sm btn-red" data-id="httpsstreameiv-musiccomlistenpophitsradiomp3" onclick="toggleClient(this.dataset.id)">⏸ השהה</button><button class="btn btn-sm btn-red" data-id="httpsstreameiv-musiccomlistenpophitsradiomp3" onclick="delClient(this.dataset.id)">🗑</button></div></div></div>
+  </div>
+</div>
+
+<script>
+var MASTER_PW = localStorage.getItem('eiv_music_pw') || 'EIV2024';
+var SB_URL = 'https://lhnjxtwmngfsetgzqjts.supabase.co';
+var SB_KEY = 'sb_publishable_9nbM2jActQcpUhPzUemOVA_z2R0TRJd';
+var clients = [];
+var PLAYER_BASE = window.location.origin + '/player.html';
+
+async function sbFetch(table, opts){
+  opts=opts||{};
+  var method=opts.method||'GET', params=opts.params||'', body=opts.body||null, prefer=opts.prefer||'';
+  var url=SB_URL+'/rest/v1/'+table+(params?'?'+params:'');
+  var headers={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':prefer};
+  var o={method:method,headers:headers};
+  if(body)o.body=JSON.stringify(body);
+  var r=await fetch(url,o);
+  if(method==='DELETE'||prefer==='return=minimal')return true;
+  var t=await r.text();if(!t)return[];
+  try{return JSON.parse(t);}catch(e){return[];}
+}
+
+function doLogin(){
+  var pw=document.getElementById('pwInput').value;
+  if(pw===MASTER_PW){
+    document.getElementById('loginScreen').classList.remove('active');
+    document.getElementById('mainScreen').classList.add('active');
+    goPage('clients');
+  } else {
+    document.getElementById('loginErr').textContent='סיסמה שגויה';
+  }
+}
+function doLogout(){
+  document.getElementById('mainScreen').classList.remove('active');
+  document.getElementById('loginScreen').classList.add('active');
+  document.getElementById('pwInput').value='';
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOv').classList.toggle('open');
+}
+function goPage(p){
+  document.querySelectorAll('.nav-item').forEach(function(e){e.classList.remove('active')});
+  var el=document.getElementById('nav-'+p);if(el)el.classList.add('active');
+  if(window.innerWidth<=700)toggleSidebar();
+  if(p==='clients')renderClients();
+  if(p==='settings')renderSettings();
+}
+function om(t,b){document.getElementById('mt').textContent=t;document.getElementById('mbody').innerHTML=b;document.getElementById('mo').classList.add('open');}
+function cm(){document.getElementById('mo').classList.remove('open');}
+function v(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+function toast(msg){var e=document.getElementById('toast');e.textContent=msg;e.classList.add('show');setTimeout(function(){e.classList.remove('show');},2400);}
+function genId(){return Math.random().toString(36).slice(2,8).toLowerCase();}
+
+// ══ CLIENTS PAGE ══
+async function renderClients(){
+  document.getElementById('mainContent').innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">טוען...</div>';
+  try{
+    var data = await sbFetch('eiv_players','');
+    clients = data||[];
+  }catch(e){ clients=JSON.parse(localStorage.getItem('eiv_players_local')||'[]'); }
+
+  var html='<div class="page-hdr">'+
+    '<div><div class="page-title">🎵 לקוחות מוזיקה</div>'+
+    '<div class="page-sub">'+clients.length+' לקוחות · כל לקוח מקבל לינק ייחודי לסטרימר</div></div>'+
+    '<button class="btn btn-blue" onclick="openAddClient()">+ הוסף לקוח</button></div>'+
+
+    '<div class="stat-grid">'+
+      '<div class="stat"><div class="stat-num">'+clients.length+'</div><div class="stat-lbl">סה"כ לקוחות</div></div>'+
+      '<div class="stat"><div class="stat-num" style="color:var(--green)">'+clients.filter(function(c){return c.active!==false;}).length+'</div><div class="stat-lbl">פעילים</div></div>'+
+      '<div class="stat"><div class="stat-num" style="color:var(--red)">'+clients.filter(function(c){return c.active===false;}).length+'</div><div class="stat-lbl">מושהים</div></div>'+
+    '</div>'+
+
+    '<div style="background:#eef1fd;border-radius:var(--r);padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--blue)">'+
+    '💡 <strong>איך עובד:</strong> הוסף לקוח + לינק AzuraCast ← קבל לינק ← שים בסטרימר ← מנגן לבד אוטומטית'+
+    '</div>';
+
+  if(!clients.length){
+    html+='<div class="card" style="text-align:center;padding:50px;color:var(--text3)">'+
+      'אין לקוחות עדיין<br><br>'+
+      '<button class="btn btn-blue" onclick="openAddClient()">+ הוסף לקוח ראשון</button></div>';
+  } else {
+    html+=clients.map(function(c){
+      var link = PLAYER_BASE+'?id='+c.id;
+      var active = c.active!==false;
+      return '<div class="client-card" style="border-right-color:'+(active?'#b06ab3':'#9ca3af')+'">'+
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px">'+
+          '<div>'+
+            '<div class="client-name">'+c.name+'</div>'+
+            '<div class="client-stream">🎵 '+c.stream_url+'</div>'+
+          '</div>'+
+          '<span class="badge '+(active?'badge-green':'badge-red')+'">'+(active?'פעיל':'מושהה')+'</span>'+
+        '</div>'+
+        '<div class="client-link-box">'+
+          '<div class="client-link-label">🔗 לינק לסטרימר</div>'+
+          '<div class="client-link">'+link+'</div>'+
+          '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+            '<button class="btn btn-sm btn-blue" data-link="'+link+'" onclick="copyLink(this)">📋 העתק לינק</button>'+
+            '<a href="'+link+'" target="_blank" class="btn btn-sm btn-green" style="text-decoration:none">▶️ בדוק</a>'+
+          '</div>'+
+        '</div>'+
+        '<div style="display:flex;gap:8px;margin-top:10px">'+
+          '<button class="btn btn-sm btn-outline" data-id="'+c.id+'" onclick="openEditClient(this.dataset.id)">✏️ ערוך</button>'+
+          '<button class="btn btn-sm '+(active?'btn-red':'btn-green')+'" data-id="'+c.id+'" onclick="toggleClient(this.dataset.id)">'+(active?'⏸ השהה':'▶️ הפעל')+'</button>'+
+          '<button class="btn btn-sm btn-red" data-id="'+c.id+'" onclick="delClient(this.dataset.id)">🗑</button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  document.getElementById('mainContent').innerHTML=html;
+}
+
+function copyLink(el){
+  var link=el.dataset.link;
+  navigator.clipboard.writeText(link).then(function(){toast('✓ הועתק!');}).catch(function(){
+    var ta=document.createElement('textarea');ta.value=link;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('✓ הועתק!');
+  });
+}
+
+function clientForm(c){
+  c=c||{};
+  return '<div class="field"><label>שם הלקוח / עסק</label>'+
+    '<input class="finp" id="cName" value="'+(c.name||'')+'" placeholder="בית קפה דוד"></div>'+
+    '<div class="field"><label>קוד ייחודי (לURL — אנגלית בלבד)</label>'+
+    '<input class="finp" id="cId" value="'+(c.id||'')+'" placeholder="coffeeshop1" '+(c.id?'readonly':'')+'>'+
+    '<div style="font-size:11px;color:var(--text3);margin-top:3px">אותיות ומספרים בלבד, ללא רווחים</div></div>'+
+    '<div class="field"><label>לינק סטרים AzuraCast</label>'+
+    '<input class="finp" id="cStream" value="'+(c.stream_url||'')+'" placeholder="http://79.143.176.78/listen/pop/radio.mp3"></div>'+
+    '<div class="field"><label>לוגו URL (אופציונלי)</label>'+
+    '<input class="finp" id="cLogo" value="'+(c.logo||'')+'" placeholder="https://..."></div>';
+}
+
+function openAddClient(){
+  om('+ הוסף לקוח',
+    clientForm()+
+    '<div style="display:flex;gap:10px;margin-top:18px">'+
+    '<button class="btn btn-outline" onclick="cm()" style="flex:0 0 80px">ביטול</button>'+
+    '<button class="btn btn-blue" style="flex:1" onclick="saveClient()">הוסף ←</button></div>');
+}
+
+function openEditClient(id){
+  var c=clients.find(function(x){return x.id===id;});if(!c)return;
+  var body=clientForm(c)+
+    '<div style="display:flex;gap:10px;margin-top:18px">'+
+    '<button class="btn btn-outline" onclick="cm()" style="flex:0 0 80px">ביטול</button>'+
+    '<button class="btn btn-blue" style="flex:1" id="editSaveBtn">שמור ←</button></div>';
+  om('✏️ '+c.name, body);
+  document.getElementById('editSaveBtn').onclick=function(){saveClient(id);};
+}
+
+async function saveClient(id){
+  var name=v('cName'), cid=v('cId'), stream=v('cStream'), logo=v('cLogo');
+  if(!name||!cid||!stream){toast('נא למלא שם, קוד וסטרים');return;}
+  cid=cid.toLowerCase().replace(/[^a-z0-9-]/g,'');
+  var row={id:cid,name:name,stream_url:stream,logo:logo||null,active:true};
+  try{
+    await sbFetch('eiv_players',{method:id?'PATCH':'POST',params:id?'id=eq.'+id:'',body:row,prefer:'return=minimal'});
+    // Also save locally
+    if(!id) clients.push(row);
+    else { var idx=clients.findIndex(function(x){return x.id===id;}); if(idx>=0)clients[idx]=Object.assign(clients[idx],row); }
+    localStorage.setItem('eiv_players_local',JSON.stringify(clients));
+    toast(id?'✓ עודכן':'✓ לקוח נוסף! לינק: /player.html?id='+cid);
+    cm(); renderClients();
+  }catch(e){toast('שגיאה — בדוק חיבור');}
+}
+
+async function toggleClient(id){
+  var c=clients.find(function(x){return x.id===id;});if(!c)return;
+  c.active=!c.active;
+  try{
+    await sbFetch('eiv_players',{method:'PATCH',params:'id=eq.'+id,body:{active:c.active},prefer:'return=minimal'});
+    localStorage.setItem('eiv_players_local',JSON.stringify(clients));
+    toast(c.active?'✅ הופעל':'⏸ הושהה'); renderClients();
+  }catch(e){toast('שגיאה');}
+}
+
+async function delClient(id){
+  if(!confirm('למחוק לקוח זה?'))return;
+  try{
+    await sbFetch('eiv_players',{method:'DELETE',params:'id=eq.'+id});
+    clients=clients.filter(function(c){return c.id!==id;});
+    localStorage.setItem('eiv_players_local',JSON.stringify(clients));
+    toast('נמחק'); renderClients();
+  }catch(e){toast('שגיאה');}
+}
+
+// ══ SETTINGS ══
+function renderSettings(){
+  document.getElementById('mainContent').innerHTML=
+    '<div class="page-hdr"><div class="page-title">⚙️ הגדרות</div></div>'+
+    '<div class="card" style="max-width:420px">'+
+    '<div style="font-size:14px;font-weight:700;margin-bottom:16px">אבטחה</div>'+
+    '<div class="field"><label>סיסמה חדשה</label><input class="finp" id="newPw" type="password" placeholder="הכנס סיסמה חדשה"></div>'+
+    '<div class="field"><label>אימות סיסמה</label><input class="finp" id="newPw2" type="password" placeholder="הכנס שוב"></div>'+
+    '<button class="btn btn-blue" onclick="savePw()" style="width:100%">שמור סיסמה</button>'+
+    '</div>'+
+    '<div class="card" style="max-width:420px;margin-top:16px">'+
+    '<div style="font-size:14px;font-weight:700;margin-bottom:10px">לינק בסיס הנגן</div>'+
+    '<div style="font-size:13px;color:var(--text2);margin-bottom:8px">כתובת הsite שה-player.html נמצא בו:</div>'+
+    '<input class="finp" id="playerBase" value="'+PLAYER_BASE+'" placeholder="https://your-site.netlify.app/player.html">'+
+    '<button class="btn btn-blue" onclick="savePlayerBase()" style="width:100%;margin-top:10px">שמור</button>'+
+    '</div>';
+}
+function savePw(){
+  var p1=v('newPw'),p2=v('newPw2');
+  if(!p1){toast('הכנס סיסמה');return;}
+  if(p1!==p2){toast('הסיסמאות לא תואמות');return;}
+  MASTER_PW=p1;localStorage.setItem('eiv_music_pw',p1);toast('✅ סיסמה עודכנה');
+}
+function savePlayerBase(){
+  var base=v('playerBase');
+  if(!base){toast('הכנס כתובת');return;}
+  PLAYER_BASE=base;localStorage.setItem('eiv_player_base',base);toast('✅ נשמר');
+}
+
+document.getElementById('pwInput').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+window.addEventListener('load',function(){
+  PLAYER_BASE=localStorage.getItem('eiv_player_base')||window.location.origin+'/player.html';
+});
+</script>
+<script defer="" src="./Eiv Music — ניהול לקוחות-סטרימר_files/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;385d01833524430cb198ac2a02a46dd6&quot;,&quot;r&quot;:1,&quot;server_timing&quot;:{&quot;name&quot;:{&quot;cfCacheStatus&quot;:true,&quot;cfEdge&quot;:true,&quot;cfExtPri&quot;:true,&quot;cfL4&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfSpeedBrain&quot;:true},&quot;location_startswith&quot;:null}}" crossorigin="anonymous"></script>
+
+
+</body></html>
