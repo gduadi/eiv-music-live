@@ -1,0 +1,2030 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#121212">
+<meta name="apple-mobile-web-app-title" content="EIV Music">
+<title>EIV Music</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ════ SPOTIFY DNA — EIV COLORS ════ */
+:root{
+  --bg:#121212;
+  --s1:#181818;
+  --s2:#242424;
+  --s3:#2a2a2a;
+  --b:rgba(255,255,255,0.1);
+  --ac:#7c5cfc;
+  --ac2:#a78bfa;
+  --ac3:#38bdf8;
+  --pink:#f472b6;
+  --green:#1db954;
+  --red:#f87171;
+  --gold:#fbbf24;
+  --txt:#ffffff;
+  --txt2:#b3b3b3;
+  --txt3:#6a6a6a;
+  --r:8px;--rs:4px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;height:100dvh;overflow:hidden}
+body{
+  font-family:'Heebo',sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+  display:flex;flex-direction:column;
+}
+
+/* NO ANIMATED BG — ספוטיפיי לא עושה את זה */
+.bg{display:none}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:relative;z-index:10;
+  height:calc(56px + env(safe-area-inset-top,0px));
+  display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;
+  background:var(--bg);
+  padding-top:env(safe-area-inset-top,0px);
+}
+.logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:16px}
+.logo-ring{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--ac);
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  animation:spin 4s linear infinite;animation-play-state:paused;
+}
+.logo-ring.on{animation-play-state:running}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spin-slow{to{transform:rotate(360deg)}}
+.logo-txt{color:#fff;font-weight:900}
+.client-chip{
+  margin-right:auto;
+  font-size:12px;font-weight:700;color:var(--txt2);
+  display:flex;align-items:center;gap:5px;
+}
+
+/* ── BOTTOM NAV ── */
+.tabs{
+  flex-shrink:0;display:flex;
+  background:var(--s1);
+  border-top:1px solid rgba(255,255,255,.08);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.tab{
+  flex:1;padding:10px 4px 10px;font-size:10px;font-weight:700;cursor:pointer;
+  color:var(--txt3);
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  letter-spacing:.3px;text-transform:uppercase;
+  position:relative;
+  -webkit-tap-highlight-color:transparent;
+}
+.tab-icon{font-size:24px;line-height:1;transition:transform .15s}
+.tab.active{color:#fff}
+.tab.active .tab-icon{color:var(--ac);transform:scale(1.1)}
+.bdg{display:none}
+
+/* ── MAIN ── */
+.main{flex:1;overflow:hidden;position:relative;}
+.page{
+  display:none !important;
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  overflow-y:auto;overflow-x:hidden;
+  flex-direction:column;
+  -webkit-overflow-scrolling:touch;
+}
+.page.active{display:flex !important}
+
+/* מגביל רוחב לנייד */
+body{max-width:430px;margin:0 auto;background:#000}
+::-webkit-scrollbar{width:0}
+
+/* ══ NOW PLAYING — MOBILE FIRST ══ */
+.np{
+  align-items:center;
+  padding:20px 20px 12px;
+  gap:0;
+  background:linear-gradient(180deg,rgba(124,92,252,.2) 0%,var(--bg) 50%);
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+
+/* COVER ART — ספוטיפיי: ריבוע גדול עם shadow */
+.vinyl-wrap{
+  position:relative;margin-bottom:20px;flex-shrink:0;
+  width:min(220px,55vw);height:min(220px,55vw);
+}
+.vinyl-outer{
+  width:100%;height:100%;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0%, transparent 13%,
+      rgba(255,255,255,.025) 13.5%, transparent 14.5%,
+      rgba(255,255,255,.02) 18%, transparent 19%,
+      rgba(255,255,255,.025) 23%, transparent 24%,
+      rgba(255,255,255,.02) 28%, transparent 29%,
+      rgba(255,255,255,.025) 33%, transparent 34%,
+      rgba(255,255,255,.02) 38%, transparent 39%,
+      rgba(255,255,255,.025) 43%, transparent 44%,
+      rgba(255,255,255,.02) 48%, transparent 49%,
+      #0a0a0a 100%),
+    conic-gradient(
+      #0d0d0d 0deg, #141414 20deg, #0a0a0a 40deg,
+      #111 60deg, #0d0d0d 80deg, #151515 100deg,
+      #0a0a0a 120deg, #111 140deg, #0d0d0d 160deg,
+      #141414 180deg, #0a0a0a 200deg, #111 220deg,
+      #0d0d0d 240deg, #151515 260deg, #0a0a0a 280deg,
+      #111 300deg, #0d0d0d 320deg, #141414 340deg,
+      #0d0d0d 360deg
+    );
+  display:flex;align-items:center;justify-content:center;
+  animation:spin 3s linear infinite;
+  animation-play-state:paused;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.05),
+    0 24px 64px rgba(0,0,0,.95),
+    inset 0 0 30px rgba(0,0,0,.6);
+  position:relative;overflow:hidden;
+}
+.vinyl-outer.on{animation-play-state:running}
+.vinyl-outer::before{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(
+    rgba(255,255,255,.04) 0deg, transparent 25deg,
+    rgba(255,255,255,.03) 50deg, transparent 75deg,
+    rgba(255,255,255,.05) 100deg, transparent 125deg,
+    rgba(255,255,255,.03) 150deg, transparent 175deg,
+    rgba(255,255,255,.04) 200deg, transparent 225deg,
+    rgba(255,255,255,.03) 250deg, transparent 275deg,
+    rgba(255,255,255,.04) 300deg, transparent 325deg,
+    rgba(255,255,255,.03) 350deg, transparent 360deg
+  );
+  pointer-events:none;
+}
+.vinyl-mid{
+  width:68px;height:68px;
+  border-radius:50%;
+  background:radial-gradient(circle, #1e1440 0%, #130e2a 60%, #0c0818 100%);
+  border:1.5px solid rgba(124,92,252,.2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;z-index:2;
+  box-shadow:
+    0 0 0 6px rgba(0,0,0,.7),
+    0 0 0 7px rgba(255,255,255,.03);
+  flex-shrink:0;gap:2px;
+}
+.vinyl-hole{
+  width:9px;height:9px;border-radius:50%;
+  background:#04030a;
+  border:1px solid rgba(124,92,252,.15);
+  position:absolute;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:3;
+}
+.vinyl-groove{
+  position:absolute;border-radius:50%;
+  border:1px solid rgba(255,255,255,.025);
+  pointer-events:none;
+}
+.vg1{width:96px;height:96px;top:62px;left:62px}
+.vg2{width:126px;height:126px;top:47px;left:47px}
+.vg3{width:156px;height:156px;top:32px;left:32px}
+.vg4{width:186px;height:186px;top:17px;left:17px}
+
+.needle{
+  position:absolute;top:-6px;right:-12px;
+  width:48px;height:1.5px;
+  background:linear-gradient(90deg,transparent,#aaa,#ccc);
+  border-radius:2px;transform-origin:right center;
+  transform:rotate(-28deg);
+  transition:transform .5s cubic-bezier(.34,1.56,.64,1);
+  z-index:5;
+}
+.needle.on{transform:rotate(-46deg)}
+.needle::after{
+  content:'';position:absolute;right:-1px;top:-3px;
+  width:7px;height:7px;border-radius:50%;
+  background:#ccc;box-shadow:0 0 3px rgba(255,255,255,.3);
+}
+
+/* EQ */
+.eq-wrap{
+  display:flex;gap:3px;align-items:flex-end;height:18px;
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+}
+.eq-wrap span{
+  width:3px;border-radius:2px;
+  background:var(--ac);
+  animation:eqa .5s ease-in-out infinite alternate;opacity:0;transition:opacity .3s;
+}
+.eq-wrap span:nth-child(1){height:6px;animation-delay:0s}
+.eq-wrap span:nth-child(2){height:12px;animation-delay:.1s}
+.eq-wrap span:nth-child(3){height:18px;animation-delay:.05s}
+.eq-wrap span:nth-child(4){height:12px;animation-delay:.15s}
+.eq-wrap span:nth-child(5){height:7px;animation-delay:.08s}
+.eq-wrap.on span{opacity:1}
+@keyframes eqa{from{transform:scaleY(.3)}to{transform:scaleY(1)}}
+
+/* TRACK INFO */
+.np-info{
+  text-align:right;margin-bottom:20px;
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  gap:8px;
+}
+.np-info-left{flex:1;min-width:0}
+.np-name{
+  font-size:19px;font-weight:900;margin-bottom:3px;
+  color:#fff;line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.np-artist{color:var(--txt2);font-size:13px;font-weight:500}
+.np-tags{display:none}
+.np-heart{
+  width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+  color:var(--txt2);font-size:22px;cursor:pointer;flex-shrink:0;
+}
+
+/* PROGRESS */
+.prog-section{width:100%;margin-bottom:20px}
+.prog-track{
+  height:4px;background:rgba(255,255,255,.2);border-radius:2px;
+  cursor:pointer;margin-bottom:8px;position:relative;
+}
+.prog-fill{
+  height:100%;border-radius:2px;
+  background:#fff;
+  transition:width .3s linear;pointer-events:none;
+}
+.prog-track:active .prog-fill{background:var(--ac)}
+.prog-glow{display:none}
+.prog-times{
+  display:flex;justify-content:space-between;
+  font-size:11px;color:var(--txt3);
+}
+
+/* CONTROLS */
+.controls-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  margin-bottom:16px;width:100%;
+}
+.ctrls{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;padding:0 4px;
+}
+.cb{
+  width:40px;height:40px;
+  background:transparent;border:none;
+  color:var(--txt2);font-size:22px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:color .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.cb:active{color:#fff;transform:scale(.92)}
+.cb.on{color:var(--ac)}
+.cb-play{
+  width:64px;height:64px;border-radius:50%;
+  background:#fff;border:none;color:#000;font-size:24px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+.cb-play:active{transform:scale(.94)}
+
+/* VOL */
+.vol-row{
+  display:flex;align-items:center;gap:10px;
+  width:100%;
+}
+.vol-ic{font-size:16px;color:var(--txt3);cursor:pointer}
+input[type=range]{
+  flex:1;-webkit-appearance:none;height:4px;border-radius:2px;
+  background:rgba(255,255,255,.2);outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+  background:#fff;cursor:pointer;
+}
+
+/* AI CARD */
+.ai-card{
+  width:100%;
+  background:var(--s1);border-radius:8px;padding:12px 14px;
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:10px;
+}
+.ai-avatar{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  background:var(--ac);
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+}
+.ai-card-info{flex:1;min-width:0}
+.ai-card-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.ai-card-sub{font-size:11px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ai-card-btn{
+  background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:50px;
+  padding:7px 14px;font-size:12px;font-weight:700;color:#fff;
+  cursor:pointer;font-family:'Heebo',sans-serif;
+  white-space:nowrap;flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.ai-card-btn:active{background:rgba(255,255,255,.1)}
+
+/* ══ LIBRARY ══ */
+.lib-page{display:flex;flex-direction:column;padding:0;overflow:hidden}
+
+.lib-topbar{display:none} /* לא בשימוש */
+.lf-btn{display:none} /* לא בשימוש */
+
+.lib-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* SECTION HEADERS */
+.lib-section-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 16px 10px;
+}
+.lib-section-title{font-size:20px;font-weight:900;color:#fff}
+
+/* PLAYLIST GRID */
+.sp-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:12px;padding:0 16px 8px;
+}
+.sp-card{
+  background:var(--s1);border-radius:6px;
+  cursor:pointer;overflow:hidden;position:relative;
+  -webkit-tap-highlight-color:transparent;
+}
+.sp-card:active{background:var(--s2)}
+.sp-card.active{background:var(--s2)}
+.sp-card-cover{
+  width:100%;aspect-ratio:1;
+  background:var(--s3);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.sp-card-cover-grid{display:grid;grid-template-columns:1fr 1fr;width:100%;height:100%}
+.sp-card-cover-grid span{display:flex;align-items:center;justify-content:center;font-size:22px}
+/* כפתור play — תמיד נראה במובייל */
+.sp-card-play{
+  position:absolute;bottom:8px;left:8px;
+  width:38px;height:38px;border-radius:50%;
+  background:var(--ac);border:none;
+  font-size:16px;color:#fff;cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.6);
+  opacity:1;
+  display:flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.sp-card.active .sp-card-play{background:var(--green);color:#000}
+.sp-card-del{
+  position:absolute;top:6px;right:6px;
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(0,0,0,.6);border:none;
+  color:var(--txt2);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.sp-card-info{padding:8px 10px 10px}
+.sp-card-name{
+  font-size:13px;font-weight:700;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;
+}
+.sp-card-meta{font-size:11px;color:var(--txt2)}
+
+/* SEARCH */
+.search-box{position:relative;width:100%;margin-bottom:0}
+.search-box input{
+  width:100%;
+  background:var(--s2);border:none;
+  border-radius:4px;color:#fff;
+  font-family:'Heebo',sans-serif;font-size:14px;
+  padding:10px 38px 10px 14px;outline:none;
+}
+.search-box input:focus{background:var(--s3)}
+.search-box input::placeholder{color:var(--txt3)}
+.search-box .si{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  color:var(--txt3);font-size:16px;pointer-events:none;
+}
+
+/* GENRE CHIPS */
+.genre-row{display:flex;gap:6px;padding:8px 16px;overflow-x:auto}
+.genre-row::-webkit-scrollbar{display:none}
+.gtab{
+  padding:5px 14px;border-radius:50px;font-size:12px;font-weight:700;
+  cursor:pointer;white-space:nowrap;transition:background .15s;
+  background:var(--s2);border:none;color:var(--txt2);
+}
+.gtab.active{background:var(--ac);color:#fff}
+.gtab:hover:not(.active){background:var(--s3);color:#fff}
+
+/* TRACK ROW — ספוטיפיי: פשוט, נקי */
+.sel-row{background:rgba(124,92,252,.12)!important}
+.sel-cb{
+  width:20px;height:20px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid var(--txt3);background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:900;color:#fff;
+  transition:all .15s;
+}
+.sel-row .sel-cb{border-color:var(--ac);background:var(--ac)}
+.track-row{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 16px;
+  cursor:pointer;position:relative;
+  -webkit-tap-highlight-color:transparent;
+}
+.track-row:active{background:rgba(255,255,255,.06)}
+.track-row.active{background:rgba(255,255,255,.06)}
+.track-row.active::before{
+  content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);
+  width:3px;height:55%;border-radius:2px;
+  background:var(--ac);
+}
+.t-art{
+  width:44px;height:44px;border-radius:4px;flex-shrink:0;
+  background:var(--s2);
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  position:relative;overflow:hidden;
+}
+/* overlay רק כשאקטיב — לא ב-hover (נייד לא עושה hover) */
+.t-art-ov{
+  position:absolute;inset:0;background:rgba(0,0,0,.55);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;opacity:0;
+}
+.track-row.active .t-art-ov{opacity:1}
+.t-info{flex:1;min-width:0}
+.t-name{
+  font-size:14px;font-weight:500;color:#fff;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px;
+}
+.track-row.active .t-name{color:var(--ac);font-weight:700}
+.t-sub{font-size:12px;color:var(--txt2)}
+.t-dur{font-size:12px;color:var(--txt3);flex-shrink:0}
+.t-plus{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:transparent;border:none;
+  color:rgba(255,255,255,.35);font-size:22px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  opacity:1;
+}
+.t-plus:active{color:#fff;background:rgba(255,255,255,.1)}
+.track-row:hover .t-edit{opacity:1!important}
+.track-row:active .t-edit{opacity:1!important}
+.t-plus.in{color:var(--ac);opacity:1}
+
+.sec-lbl{
+  font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:var(--txt3);padding:16px 16px 8px;
+}
+
+/* PLAYLIST BUILDER SHEET */
+.pl-name-inp{
+  background:none;border:none;color:#fff;
+  font-family:'Heebo',sans-serif;font-size:18px;font-weight:700;outline:none;
+}
+.pl-name-inp::placeholder{color:var(--txt3)}
+.pl-meta{font-size:12px;color:var(--txt2)}
+.drop-zone{min-height:40px}
+.drop-hint{
+  text-align:center;padding:32px 20px;
+  color:var(--txt3);font-size:13px;
+}
+.drop-hint-icon{font-size:32px;margin-bottom:8px;opacity:.5}
+
+/* MODAL */
+.modal-ov{
+  position:fixed;inset:0;z-index:1000;
+  display:flex;align-items:flex-end;
+  background:rgba(0,0,0,.7);
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.modal-ov.open{opacity:1;pointer-events:all}
+.modal{
+  background:#282828;
+  border-radius:12px 12px 0 0;
+  width:100%;max-width:500px;padding:20px;
+  max-height:85vh;overflow-y:auto;
+  transform:translateY(50px);transition:transform .25s;
+}
+.modal-ov.open .modal{transform:translateY(0)}
+.m-pill{width:32px;height:4px;border-radius:4px;background:#3e3e3e;margin:0 auto 16px}
+.m-title{font-size:17px;font-weight:700;color:#fff;margin-bottom:16px}
+
+/* BUTTONS */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:50px;
+  font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .15s;border:none;
+}
+.btn-primary{background:var(--ac);color:#fff}
+.btn-primary:hover{background:var(--ac2)}
+.btn-ghost{background:transparent;color:#fff;border:1px solid var(--b)}
+.btn-ghost:hover{border-color:#fff}
+.btn-green{background:var(--green);color:#000}
+.btn-green:hover{filter:brightness(1.1)}
+.btn-sm{padding:5px 12px;font-size:12px}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:#282828;color:#fff;
+  padding:10px 20px;border-radius:4px;
+  font-size:13px;font-weight:700;font-family:'Heebo',sans-serif;
+  opacity:0;transition:all .25s;z-index:9999;white-space:nowrap;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{color:var(--green)}
+.toast.err{color:var(--red)}
+.toast.info{color:var(--ac2)}
+
+/* EMPTY STATE */
+.state-box{text-align:center;padding:48px 20px;color:var(--txt3)}
+.state-box .icon{font-size:40px;margin-bottom:12px;opacity:.4}
+.state-box h4{font-size:15px;color:var(--txt2);margin-bottom:6px;font-weight:700}
+.state-box p{font-size:12px}
+.spin-ic{animation:spin 1.2s linear infinite;display:inline-block}
+
+/* REMOTE */
+.rc-bar{
+  width:100%;background:var(--s1);border-radius:8px;
+  padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px;
+}
+.rc-dot{width:8px;height:8px;border-radius:50%;background:var(--txt3);flex-shrink:0}
+.rc-dot.live{background:var(--green);box-shadow:0 0 6px var(--green);animation:rc-pulse 2s infinite}
+.rc-dot.controller{background:var(--ac2)}
+@keyframes rc-pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.rc-info{flex:1;min-width:0}
+.rc-title{font-size:12px;font-weight:700;color:#fff}
+.rc-sub{font-size:10px;color:var(--txt2);margin-top:1px}
+.rc-btn{
+  background:var(--ac);border:none;border-radius:50px;
+  padding:6px 14px;font-size:12px;font-weight:700;color:#fff;
+  cursor:pointer;font-family:'Heebo',sans-serif;transition:background .15s;
+}
+.rc-btn:hover{background:var(--ac2)}
+.rc-btn.stop{background:var(--red)}
+.rc-mode-btns{display:flex;gap:8px;margin-bottom:12px;width:100%}
+.rc-mode-btn{
+  flex:1;padding:10px 8px;border-radius:8px;font-size:12px;font-weight:700;
+  cursor:pointer;text-align:center;
+  background:var(--s2);border:1px solid var(--b);color:var(--txt2);
+  font-family:'Heebo',sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.rc-mode-btn:active{background:var(--s3)}
+.rc-mode-btn.active{background:rgba(124,92,252,.15);border-color:rgba(124,92,252,.3);color:var(--ac2)}
+</style>
+</head>
+<body>
+
+<!-- מסך חסימה עד שהרשאה נבדקת -->
+<div id="authGate" style="position:fixed;inset:0;background:#07070d;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px">
+  <div style="width:40px;height:40px;border-radius:50%;border:3px solid rgba(176,106,179,0.2);border-top-color:#b06ab3;animation:spin 0.8s linear infinite"></div>
+  <div style="color:rgba(255,255,255,0.4);font-family:Heebo,sans-serif;font-size:13px">טוען...</div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<div class="bg"><div class="bg-grad"></div><div class="bg-grid"></div></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-ring" id="logoRing">🎵</div>
+    <span class="logo-txt">EIV Music</span>
+  </div>
+  <div class="client-chip" id="clientChip" style="display:none">
+    <span>👤</span><span id="clientName"></span>
+  </div>
+</div>
+
+<!-- TABS -->
+<!-- MAIN -->
+<div class="main">
+
+  <!-- NOW PLAYING -->
+  <div class="page active np" id="page-now">
+    <div class="vinyl-wrap" id="vinylWrap">
+      <div class="vinyl-outer" id="vinyl">
+        <div class="vinyl-groove vg1"></div>
+        <div class="vinyl-groove vg2"></div>
+        <div class="vinyl-groove vg3"></div>
+        <div class="vinyl-groove vg4"></div>
+        <div class="vinyl-mid">
+          <div class="vinyl-hole"></div>
+          <div style="font-size:11px;font-weight:900;letter-spacing:1.5px;color:rgba(124,92,252,.8);user-select:none">EIV</div>
+        </div>
+      </div>
+      <div class="needle" id="needle"></div>
+      <div class="eq-wrap" id="eq">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <div class="np-info">
+      <div class="np-info-left">
+        <div class="np-name" id="npName">בחר שיר להשמעה</div>
+        <div class="np-artist" id="npArtist">EIV Music Library</div>
+      </div>
+      <div class="np-heart" id="npHeart">♡</div>
+    </div>
+
+    <div class="prog-section">
+      <div class="prog-track" id="progTrack" onclick="seekTo(event)">
+        <div class="prog-fill" id="progFill" style="width:0%"></div>
+        <div class="prog-glow"></div>
+      </div>
+      <div class="prog-times">
+        <span id="tEl">0:00</span>
+        <span id="tDur">0:00</span>
+      </div>
+    </div>
+
+    <div class="controls-wrap">
+      <div class="ctrls">
+        <button class="cb" id="btnSh" onclick="toggleShuffle()" title="ערבוב">⇌</button>
+        <button class="cb" onclick="prevTrack()">⏮</button>
+        <button class="cb-play" id="btnPlay" onclick="togglePlay()">▶</button>
+        <button class="cb" onclick="nextTrack()">⏭</button>
+        <button class="cb" id="btnRep" onclick="toggleRepeat()" title="חזרה">↺</button>
+      </div>
+      <div class="vol-row">
+        <span class="vol-ic" onclick="toggleMute()" id="volIc">🔊</span>
+        <input type="range" min="0" max="100" value="80" oninput="setVol(this.value)" id="volRange">
+      </div>
+    </div>
+
+    <div class="ai-card">
+      <div class="ai-avatar">🤖</div>
+      <div class="ai-card-info">
+        <div class="ai-card-title">AI ממליץ לך</div>
+        <div class="ai-card-sub" id="aiSub">האזן לשירים ואבנה לך פלייליסט אישי</div>
+      </div>
+      <button class="ai-card-btn" onclick="openAI()">✨ המלץ</button>
+    </div>
+
+    <!-- MODE SELECTOR -->
+    <div class="rc-mode-btns" id="rcModeBtns">
+      <button class="rc-mode-btn active" id="modeControllerBtn" onclick="setMode('controller')">📱 שולט (נייד)</button>
+      <button class="rc-mode-btn" id="modeStreamerBtn" onclick="setMode('streamer')">📺 מסך (סטרימר)</button>
+    </div>
+
+    <!-- REMOTE STATUS -->
+    <div class="rc-bar" id="rcBar">
+      <div class="rc-dot controller" id="rcDot"></div>
+      <div class="rc-info">
+        <div class="rc-title" id="rcTitle">מצב שליטה — נייד</div>
+        <div class="rc-sub" id="rcSub">בחר שיר או פלייליסט ולחץ הפעל בסטרימר</div>
+      </div>
+      <button class="rc-btn" id="rcBtn" onclick="sendToStreamer()">📡 שלח</button>
+    </div>
+  </div>
+
+  <!-- LIBRARY -->
+  <div class="page lib-page" id="page-lib">
+
+    <!-- HEADER קבוע למעלה -->
+    <div id="libHeader" style="flex-shrink:0;background:var(--bg)">
+
+      <!-- מצב רגיל: חיפוש + כפתורי פעולה -->
+      <div id="libNormal">
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 16px 8px">
+          <div class="search-box" style="flex:1">
+            <span class="si">🔍</span>
+            <input type="text" placeholder="חפש שירים, אמנים..." id="srch" oninput="renderLib()">
+          </div>
+          <button onclick="toggleSelectMode()"
+            style="height:36px;border-radius:50px;padding:0 14px;border:none;background:var(--ac);color:#fff;font:700 13px Heebo;cursor:pointer;flex-shrink:0;white-space:nowrap">
+            ☑ בחר
+          </button>
+        </div>
+        <div class="genre-row" id="genreRow"></div>
+      </div>
+
+      <!-- מצב בחירה: bar עם מידע + שם + צור -->
+      <div id="selectBar" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 16px 6px">
+          <span id="selectCount" style="font-size:14px;color:#fff;font-weight:700;flex:1">0 נבחרו</span>
+          <button onclick="toggleSelectMode()"
+            style="width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,.1);color:#b3b3b3;font-size:18px;cursor:pointer;flex-shrink:0">✕</button>
+        </div>
+        <div style="display:flex;gap:8px;padding:0 16px 12px">
+          <input id="newPlName" type="text" placeholder="שם הפלייליסט..."
+            style="flex:1;height:40px;border-radius:8px;border:none;background:#2a2a2a;color:#fff;font:600 14px Heebo;padding:0 14px;outline:none;direction:rtl;min-width:0" />
+          <button onclick="buildFromSelected()"
+            style="height:40px;border-radius:50px;border:0;background:var(--ac);color:#fff;font:800 14px Heebo;padding:0 22px;cursor:pointer;flex-shrink:0">
+            ▶ צור פלייליסט
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SCROLL: פלייליסטים + שירים -->
+    <div class="lib-scroll" id="libScroll">
+
+      <!-- פלייליסטים -->
+      <div id="savedSection">
+        <div class="lib-section-row">
+          <span class="lib-section-title">פלייליסטים</span>
+          <button onclick="openBuilder()" style="font-size:13px;color:var(--ac);background:none;border:none;cursor:pointer;font-weight:700;font-family:Heebo">＋ חדש</button>
+        </div>
+        <div class="sp-grid" id="savedList"></div>
+      </div>
+
+      <!-- שירים -->
+      <div id="songsSection">
+        <div class="lib-section-row">
+          <span class="lib-section-title" id="libCount">שירים</span>
+        </div>
+        <div id="libList"></div>
+      </div>
+
+    </div>
+
+    <!-- EDIT TRACK MODAL -->
+<div class="modal-ov" id="modalEdit" style="z-index:600">
+  <div class="modal" style="max-width:360px;margin:0 auto">
+    <div class="m-pill"></div>
+    <div class="m-title">✏ ערוך שיר</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div>
+        <div style="font-size:12px;color:var(--txt2);margin-bottom:6px">שם שיר</div>
+        <input id="editName" type="text" style="width:100%;height:40px;border-radius:8px;border:none;background:var(--s2);color:#fff;font:600 14px Heebo;padding:0 12px;outline:none;direction:rtl">
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--txt2);margin-bottom:6px">אמן</div>
+        <input id="editArtist" type="text" style="width:100%;height:40px;border-radius:8px;border:none;background:var(--s2);color:#fff;font:600 14px Heebo;padding:0 12px;outline:none;direction:rtl">
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--txt2);margin-bottom:6px">ז'אנר</div>
+        <select id="editGenre" style="width:100%;height:40px;border-radius:8px;border:none;background:var(--s2);color:#fff;font:600 14px Heebo;padding:0 12px;outline:none">
+          <option>מזרחי</option>
+          <option>ישראלי</option>
+          <option>פופ</option>
+          <option>היפ הופ</option>
+          <option>אלקטרוני</option>
+          <option>רוק</option>
+          <option>ג'אז</option>
+          <option>קלאסי</option>
+          <option>רגאיי</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button onclick="saveEditTrack()" style="flex:1;height:44px;border-radius:50px;background:var(--ac);border:none;color:#fff;font:700 14px Heebo;cursor:pointer">שמור</button>
+      <button onclick="closeEditModal()" style="height:44px;width:44px;border-radius:50%;background:var(--s2);border:none;color:#fff;font-size:18px;cursor:pointer">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- BUILDER MODAL (גולש מלמטה) -->
+    <div id="builderOverlay" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);backdrop-filter:blur(8px)" onclick="if(event.target===this)closeBuilder()">
+      <div id="builderSheet" style="position:absolute;bottom:0;left:0;right:0;max-height:85vh;background:#282828;border-radius:12px 12px 0 0;display:flex;flex-direction:column;overflow:hidden">
+        <div style="width:32px;height:4px;background:#3e3e3e;border-radius:4px;margin:10px auto 0"></div>
+        <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div id="plCoverPreview" style="width:52px;height:52px;border-radius:4px;background:#333;display:flex;align-items:center;justify-content:center;font-size:10px;color:#b3b3b3;font-weight:700;flex-shrink:0;letter-spacing:1px">EIV</div>
+            <div>
+              <input class="pl-name-inp" type="text" id="plNameInp" placeholder="שם הפלייליסט..." value="פלייליסט חדש"
+                style="background:none;border:none;color:#fff;font:700 18px Heebo;outline:none;width:190px">
+              <div class="pl-meta" id="plMeta">0 שירים</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button onclick="savePl()" style="height:36px;border-radius:50px;background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;font:700 13px Heebo;padding:0 16px;cursor:pointer">שמור</button>
+            <button onclick="activatePl()" style="width:40px;height:40px;border-radius:50%;background:#7c5cfc;border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff">▶</button>
+          </div>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:0 16px 20px">
+          <div id="builderList"></div>
+          <div id="dropHint" class="drop-hint">
+            <div class="drop-hint-icon">🎵</div>
+            <div>הוסף שירים מהרשימה</div>
+            <div style="font-size:11px;margin-top:4px;color:#6a6a6a">לחץ ＋ על שיר להוספה</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- hidden drop zone for drag support -->
+    <div id="dropZone" style="display:none" ondragover="dzOver(event)" ondragleave="dzLeave()" ondrop="dzDrop(event)"></div>
+
+  </div>
+
+  <!-- טאב פלייליסטים (נשאר ריק, goTab('pl') יעבור ל-lib) -->
+  <div class="page" id="page-pl" style="display:none"></div>
+
+</div>
+
+<!-- AI MODAL -->
+<div class="modal-ov" id="modalAI">
+  <div class="modal">
+    <div class="m-pill"></div>
+    <div class="m-title">🤖 המלצה אישית</div>
+    <div id="aiContent"></div>
+    <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:12px" onclick="closeModal()">סגור</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<audio id="audio"></audio>
+
+<script>
+// ══ CONFIG ══
+const SB_URL = 'https://lhnjxtwmngfsetgzqjts.supabase.co';
+const SB_KEY = 'sb_publishable_9nbM2jActQcpUhPzUemOVA_z2R0TRJd';
+const BUCKET = 'eiv-tracks';
+const CLIENT = new URLSearchParams(location.search).get('id') || 'demo';
+
+// ══ STATE ══
+let library = [], queue = [], qIdx = -1;
+let isPlaying = false, isShuffle = false, isRepeat = false;
+let activeGenre = 'all';
+let plTracks = [];
+let savedPls = JSON.parse(localStorage.getItem('eiv_pl2_' + CLIENT) || '[]');
+let listenHistory = JSON.parse(localStorage.getItem('eiv_hist2_' + CLIENT) || '[]');
+let activePl = null, dragId = null, plDragIdx = null;
+const audio = document.getElementById('audio');
+
+// ══ INIT ══
+// ══ בדיקת תקינות לקוח ══
+async function validateClient() {
+  if (CLIENT === 'demo') return true;
+  try {
+    const res = await fetch(`${SB_URL}/rest/v1/clients?code=eq.${encodeURIComponent(CLIENT)}&select=active`, {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+    const data = await res.json();
+    // לקוח לא קיים או חסום
+    if (!data || !data.length || !data[0].active) return false;
+    return true;
+  } catch(e) { return true; } // אם יש בעיית רשת — אל תחסום
+}
+
+// בדיקה כל 30 שניות
+setInterval(async () => {
+  const ok = await validateClient();
+  if (!ok) {
+    audio.pause();
+    window.location.replace('https://app.eiv-music.com/');
+  }
+}, 30000);
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // בדיקת הרשאה לפני הכל
+  if (CLIENT !== 'demo') {
+    const allowed = await validateClient();
+    if (!allowed) {
+      window.location.replace('https://app.eiv-music.com/');
+      return;
+    }
+  }
+
+  // הסר מסך חסימה
+  const gate = document.getElementById('authGate');
+  if (gate) gate.remove();
+  const urlMode = new URLSearchParams(location.search).get('mode');
+  if (urlMode === 'streamer') {
+    setTimeout(() => setMode('streamer'), 800);
+  }
+  const displayName = CLIENT !== 'demo' ? CLIENT : '';
+  // קוד לקוח מוסתר
+  // if (displayName) {
+  //   document.getElementById('clientName').textContent = displayName;
+  //   document.getElementById('clientChip').style.display = 'flex';
+  // }
+  audio.volume = 0.8;
+  audio.addEventListener('timeupdate', updateProg);
+  audio.addEventListener('ended', onEnd);
+  audio.addEventListener('loadedmetadata', () => {
+    document.getElementById('tDur').textContent = fmt(audio.duration);
+  });
+  await loadLib();
+});
+
+// ══ LOAD LIBRARY from Supabase Storage ══
+async function loadLib() {
+  document.getElementById('libList').innerHTML = `<div class="state-box"><div class="icon spin-ic">⚙</div><h4>טוען ספרייה...</h4></div>`;
+  try {
+    const r = await fetch(`${SB_URL}/storage/v1/object/list/${BUCKET}`, {
+      method: 'POST',
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': `Bearer ${SB_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ limit: 1000, offset: 0, prefix: '', sortBy: { column: 'name', order: 'asc' } })
+    });
+
+    if (!r.ok) throw new Error('Storage error: ' + r.status);
+    const files = await r.json();
+
+    library = (files || [])
+      .filter(f => f.name && /\.(mp3|wav|flac|aac|m4a|ogg)$/i.test(f.name) && !f.name.startsWith('.'))
+      .map(f => {
+        const raw = decodeURIComponent(f.name);
+        const clean = raw.split('/').pop().replace(/\.[^.]+$/, ''); // מסיר תיקייה ואת הסיומת
+        const parts = clean.split(/\s*-\s*/);
+        const artist = parts.length > 1 ? parts[0].trim() : '';
+        const name = parts.length > 1 ? parts.slice(1).join(' - ').trim() : clean;
+        const genre = guessGenre(clean);
+        return {
+          id: f.id || f.name,
+          name: name || clean,
+          artist,
+          genre,
+          duration: 0,
+          emoji: genreEmoji(genre),
+          url: `${SB_URL}/storage/v1/object/public/${BUCKET}/${f.name.split('/').map(p => encodeURIComponent(p)).join('/')}`,
+          fileName: f.name,
+        };
+      });
+
+    // טען שמות מותאמים אישית מ-localStorage
+    const overrides = JSON.parse(localStorage.getItem('eiv_track_meta') || '{}');
+    library.forEach(t => {
+      if (overrides[t.fileName]) {
+        t.name   = overrides[t.fileName].name   || t.name;
+        t.artist = overrides[t.fileName].artist || t.artist;
+        t.genre  = overrides[t.fileName].genre  || t.genre;
+        t.emoji  = genreEmoji(t.genre);
+      } else if (overrides[t.id]) {
+        t.name   = overrides[t.id].name   || t.name;
+        t.artist = overrides[t.id].artist || t.artist;
+        t.genre  = overrides[t.id].genre  || t.genre;
+        t.emoji  = genreEmoji(t.genre);
+      }
+    });
+    // טען names.json אם קיים ב-Supabase
+    try {
+      const nr = await fetch(`${SB_URL}/storage/v1/object/public/${BUCKET}/names.json?t=${Date.now()}`);
+      console.log('names.json status:', nr.status);
+      if (nr.ok) {
+        const namesMap = await nr.json();
+        console.log('names.json loaded:', Object.keys(namesMap).length, 'entries');
+        library.forEach(t => {
+          const fname = t.fileName.split('/').pop();
+          const hebrewName = namesMap[fname];
+          if (hebrewName) {
+            // נקה את השם — הסר סיומת וספרות מובילות
+            let origClean = hebrewName.replace(/\.[^.]+$/, '').trim();
+            origClean = origClean.replace(/^[\d\s\-_.]+/, '').trim(); // הסר מספרים מתחילה
+            origClean = origClean.replace(/\(\d+\)$/, '').trim(); // הסר (320) וכד'
+            origClean = origClean.replace(/\[.*?\]$/, '').trim(); // הסר [id] בסוף
+            // פצל לאמן ושם
+            const parts = origClean.split(/\s+-\s+/);
+            if (parts.length >= 2) {
+              t.artist = parts[0].trim();
+              t.name   = parts.slice(1).join(' - ').trim();
+            } else {
+              t.name = origClean;
+              t.artist = '';
+            }
+            // זיהוי ז'אנר לפי השם העברי
+            t.genre = guessGenre(origClean) || t.genre;
+            t.emoji = genreEmoji(t.genre);
+          }
+        });
+      }
+    } catch(e) { console.log('names.json error:', e); }
+    queue = [...library];
+    renderGenres();
+    renderLib();
+    // רענון אוטומטי כל 30 שניות — מזהה שירים חדשים שהועלו
+    if (!window._libRefreshInterval) {
+      window._libRefreshInterval = setInterval(async () => {
+        try {
+          const r2 = await fetch(`${SB_URL}/storage/v1/object/list/${BUCKET}`, {
+            method: 'POST',
+            headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ limit: 1000, offset: 0, prefix: '', sortBy: { column: 'name', order: 'asc' } })
+          });
+          const files2 = await r2.json();
+          const count = (files2 || []).filter(f => f.name && /\.(mp3|wav|flac|aac|m4a|ogg)$/i.test(f.name)).length;
+          if (count !== library.length) {
+            await loadLib(); // שיר חדש/נמחק — טען מחדש
+            showToast('🎵 הספרייה עודכנה', 'info');
+          }
+        } catch(e) {}
+      }, 30000);
+    }
+    updateBadges();
+    showToast(library.length ? `✓ ${library.length} שירים נטענו` : '⚠ הוסף שירים ל-eiv-tracks', library.length ? 'ok' : 'info');
+  } catch(e) {
+    console.error(e);
+    document.getElementById('libList').innerHTML = `<div class="state-box"><div class="icon">⚠</div><h4>שגיאה בטעינה</h4><p>${e.message}</p></div>`;
+  }
+}
+
+function guessGenre(s) {
+  s = s.toLowerCase();
+
+  // ══ מזרחי ══
+  if (/eyal golan|אייל גולן|moshe peretz|משה פרץ|peer tasi|פאר טסי|maor edri|מאור אדרי|lior narkis|ליאור נרקיס|itay levi|איתי לוי|nasreen|נסרין קדרי|sarit hadad|שרית חדד|zehava ben|זהבה בן|regev hod|רגב הוד|kobi peretz|קובי פרץ|מזרחי|mizrahi/.test(s)) return 'מזרחי';
+
+  // ══ ישראלי ══
+  if (/omer adam|עומר אדם|eden hason|עדן חסון|ishay ribo|ישי ריבו|hanan ben ari|חנן בן ארי|akiva|עקיבא|eden ben zaken|עדן בן זקן|keren peles|קרן פלס|rita|ריטה|shlomo artzi|שלמה ארצי|mosh ben ari|מוש בן ארי|idan raichel|עידן רייכל|amir benayoun|עמיר בניון|ehud banai|אהוד בנאי|aviatar banai|אביתר בנאי|shalom hanoch|שלום חנוך|berry sakharof|בארי סחרוף|gidi gov|גידי גוב|mashina|משינה|ivri lider|עברי לידר|miri mesika|מירי מסיקה|harel skaat|הראל סקעת|ninet|נינט|static ben el|סטטיק בן אל|idan amedi|עידן עמדי|idan rapal|עידן רפאל|ran danker|רן דנקר|david broza|דיויד ברוזה|yehuda poliker|יהודה פוליקר|aviv geffen|אביב גפן|dana berger|דנה ברגר|daniel solomon|דניאל סלומון|moki|מוקי|sheva|שבע|shiri memon|שירי מיימון|nurit galron|נורית גלרון|glad shagev|גלעד שגב|chava alberstein|חוה אלברשטיין|abrhm tl|אברהם טל|ישראלי|israel|hebrew/.test(s)) return 'ישראלי';
+
+  // ══ נוסטלגיה ══
+  if (/tzvika pik|צביקה פיק|arik einstein|אריק איינשטיין|yehoram gaon|יהורם גאון|oshik levi|אושיק לוי|abba|bee gees|boney m|baccara|smokie|eruption|80s|90s|שנות ה|נוסטלגיה|nostalgia|classic hit|greatest hit/.test(s)) return 'נוסטלגיה';
+
+  // ══ Afro House ══
+  if (/black coffee|keinemusik|&me|ame|rampa|adam port|moojo|caiiro|afro house|afrohouse|afro.house|themba|enoo napa|native|sun el|msaki/.test(s)) return 'Afro House';
+
+  // ══ Chill & Lounge ══
+  if (/cafe del mar|blank.jones|buddha bar|thievery|zero 7|massive attack|portishead|tricky|bonobo|tycho|lounge|chill out|chillout|ambient|downtempo/.test(s)) return 'Chill & Lounge';
+
+  // ══ לועזי שקט ══
+  if (/adele|norah jones|michael buble|john legend|james arthur|lewis capaldi|sam smith|ed sheeran|coldplay|u2|james blunt|jack johnson|jason mraz/.test(s)) return 'לועזי שקט';
+
+  // ══ פופ ══
+  if (/dua lipa|the weeknd|bruno mars|ariana grande|taylor swift|justin bieber|harry styles|beyonce|rihanna|billie eilish|katy perry|lady gaga|selena gomez|camila cabello|olivia rodrigo|doja cat|lizzo|charlie puth|bts|blackpink|post malone|pop/.test(s)) return 'פופ';
+
+  // ══ רוק ══
+  if (/bon jovi|queen|acdc|ac.dc|guns n roses|guns.n.roses|u2 |coldplay|nirvana|linkin park|green day|foo fighters|radiohead|pearl jam|metallica|imagine dragons|rock|metal/.test(s)) return 'רוק';
+
+  // ══ היפ הופ ══
+  if (/eminem|drake|kanye|kendrick|cardi b|hip.hop|hip hop|rap|24kgoldn|travis scott|lil |juice wrld|xxxtentacion|21 savage|post malone|nicki minaj|jay.z|50 cent|snoop|tupac/.test(s)) return 'היפ הופ';
+
+  // ══ R&B ══
+  if (/usher|alicia keys|john legend|marvin gaye|stevie wonder|neo soul|r.b|rnb|trey songz|chris brown|mary j blige/.test(s)) return 'R&B';
+
+  // ══ קלאסי ══
+  if (/classical|piano|symphony|beethoven|mozart|bach|orchestra|vivaldi|chopin/.test(s)) return 'קלאסי';
+
+  // ══ רגאיי ══
+  if (/reggae|bob marley|dancehall|sean paul|shaggy/.test(s)) return 'רגאיי';
+
+  return 'ישראלי'; // ברירת מחדל לספרייה ישראלית
+}
+
+function genreEmoji(g) {
+  const m = {
+    'מזרחי':'🪘',
+    'ישראלי':'🇮🇱',
+    'נוסטלגיה':'📼',
+    'Afro House':'🌍',
+    'Chill & Lounge':'🌊',
+    'לועזי שקט':'🎶',
+    'פופ':'🎤',
+    'רוק':'🎸',
+    'היפ הופ':'🎧',
+    'R&B':'🎙',
+    'קלאסי':'🎹',
+    'רגאיי':'🌴',
+    "ג'אז":'🎷',
+    'אלקטרוני':'🎛',
+    'ים תיכוני':'🎻',
+  };
+  return m[g] || '🎵';
+}
+
+// ══ TABS ══
+function goTab(t) {
+  if (t === 'pl') {
+    // פלייליסטים = פותח modal מלמטה, לא מסך נפרד
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    const tabEl = document.getElementById('tab-pl');
+    if (tabEl) tabEl.classList.add('active');
+    openPlaylists();
+    return;
+  }
+  document.querySelectorAll('.tab,.page').forEach(x => x.classList.remove('active'));
+  const tabEl = document.getElementById('tab-' + t);
+  const pgEl  = document.getElementById('page-' + t);
+  if (tabEl) tabEl.classList.add('active');
+  if (pgEl)  pgEl.classList.add('active');
+  if (t === 'lib') { renderLib(); }
+  if (t === 'now') { }
+}
+
+// ── פלייליסטים: מסך שלם שגולש מלמטה ──
+function openPlaylists() {
+  let ov = document.getElementById('plOverlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'plOverlay';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.7);display:flex;flex-direction:column;justify-content:flex-end';
+    ov.addEventListener('click', e => { if(e.target===ov) closePlaylists(); });
+    document.body.appendChild(ov);
+  }
+  ov.style.display = 'flex';
+  renderPlSheet();
+}
+
+function renderPlSheet() {
+  const ov = document.getElementById('plOverlay');
+  if (!ov) return;
+  const grads = ['linear-gradient(135deg,#7c5cfc,#f472b6)','linear-gradient(135deg,#38bdf8,#7c5cfc)','linear-gradient(135deg,#34d399,#38bdf8)','linear-gradient(135deg,#f472b6,#fb923c)','linear-gradient(135deg,#a78bfa,#38bdf8)'];
+
+  ov.innerHTML = `
+    <div style="background:#121212;border-radius:16px 16px 0 0;height:90vh;display:flex;flex-direction:column;overflow:hidden">
+      <div style="width:32px;height:4px;background:#333;border-radius:4px;margin:10px auto 0;flex-shrink:0"></div>
+      <div style="padding:10px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0">
+        <div style="font-size:20px;font-weight:900;color:#fff">פלייליסטים</div>
+        <div style="display:flex;gap:8px">
+          <button onclick="openBuilder()" style="height:34px;border-radius:50px;background:var(--ac);border:none;color:#fff;font:700 13px Heebo;padding:0 16px;cursor:pointer">＋ חדש</button>
+          <button onclick="closePlaylists()" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:18px;cursor:pointer">✕</button>
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch">
+        ${!savedPls.length
+          ? '<div class="state-box"><div class="icon">🎵</div><h4>עדיין אין פלייליסטים</h4><p>לחץ ＋ חדש</p></div>'
+          : '<div class="sp-grid" style="padding:16px">' + savedPls.map(pl => {
+              const total = pl.tracks.reduce((a,t)=>a+(t.duration||0),0);
+              const isAct = activePl?.id === pl.id;
+              const grad = grads[Math.abs(pl.id.split('').reduce((a,c)=>a+c.charCodeAt(0),0)) % grads.length];
+              return `<div class="sp-card ${isAct?'active':''}" onclick="openPlaylistDetail('${pl.id}')">
+                <div class="sp-card-cover" style="background:${grad}">
+                  ${coverHTML(pl.tracks, isAct)}
+                  <button class="sp-card-play" onclick="event.stopPropagation();activateSaved('${pl.id}');closePlaylists()">▶</button>
+                  <button class="sp-card-del" onclick="event.stopPropagation();delPl('${pl.id}')">✕</button>
+                </div>
+                <div class="sp-card-info">
+                  <div class="sp-card-name">${pl.name}</div>
+                  <div class="sp-card-meta">${pl.tracks.length} שירים${total?' · '+fmt(total):''}</div>
+                </div>
+              </div>`;
+            }).join('') + '</div>'
+        }
+      </div>
+    </div>`;
+}
+
+function openPlaylistDetail(id) {
+  const pl = savedPls.find(p => p.id === id);
+  if (!pl) return;
+  const ov = document.getElementById('plOverlay');
+  if (!ov) return;
+  const total = pl.tracks.reduce((a,t)=>a+(t.duration||0),0);
+  const isAct = activePl?.id === pl.id;
+  const grads = ['linear-gradient(135deg,#7c5cfc,#f472b6)','linear-gradient(135deg,#38bdf8,#7c5cfc)','linear-gradient(135deg,#34d399,#38bdf8)','linear-gradient(135deg,#f472b6,#fb923c)','linear-gradient(135deg,#a78bfa,#38bdf8)'];
+  const grad = grads[Math.abs(pl.id.split('').reduce((a,c)=>a+c.charCodeAt(0),0)) % grads.length];
+
+  ov.innerHTML = `
+    <div style="background:#121212;border-radius:16px 16px 0 0;height:90vh;display:flex;flex-direction:column;overflow:hidden">
+      <!-- HEADER עם כריכה -->
+      <div style="background:${grad};padding:20px 20px 16px;flex-shrink:0;position:relative">
+        <button onclick="renderPlSheet()" style="position:absolute;top:12px;right:16px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.4);border:none;color:#fff;font-size:18px;cursor:pointer">←</button>
+        <div style="display:flex;align-items:flex-end;gap:14px;margin-top:8px">
+          <div style="width:80px;height:80px;border-radius:8px;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 8px 24px rgba(0,0,0,.5)">${coverHTML(pl.tracks,isAct)}</div>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.7);text-transform:uppercase;margin-bottom:4px">פלייליסט</div>
+            <div style="font-size:22px;font-weight:900;color:#fff;line-height:1.1">${pl.name}</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px">${pl.tracks.length} שירים · ${total?fmt(total):''}</div>
+          </div>
+        </div>
+        <!-- כפתורי פעולה -->
+        <div style="display:flex;gap:10px;margin-top:14px;align-items:center">
+          <button onclick="activateSaved('${pl.id}');closePlaylists()" style="width:48px;height:48px;border-radius:50%;background:#fff;border:none;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center">▶</button>
+          <button onclick="editPl('${pl.id}');closePlaylists()" style="height:36px;border-radius:50px;background:transparent;border:1px solid rgba(255,255,255,.5);color:#fff;font:700 13px Heebo;padding:0 16px;cursor:pointer">✏ ערוך</button>
+          <button onclick="if(confirm('למחוק?')){delPl('${pl.id}')}" style="height:36px;border-radius:50px;background:transparent;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.6);font:700 13px Heebo;padding:0 14px;cursor:pointer">🗑</button>
+        </div>
+      </div>
+      <!-- רשימת שירים -->
+      <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch">
+        ${pl.tracks.map((t,i)=>`
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer" onclick="activateSaved('${pl.id}',${i});closePlaylists()">
+            <span style="font-size:13px;color:rgba(255,255,255,.35);width:20px;text-align:center;flex-shrink:0">${i+1}</span>
+            <div style="width:40px;height:40px;border-radius:4px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${t.emoji}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:14px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.name}</div>
+              <div style="font-size:12px;color:var(--txt2);margin-top:2px">${t.artist||''} ${t.genre?'· '+t.genre:''}</div>
+            </div>
+            <span style="font-size:12px;color:var(--txt3);flex-shrink:0">${fmt(t.duration)}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function closePlaylists() {
+  const ov = document.getElementById('plOverlay');
+  if (ov) ov.style.display = 'none';
+  // החזר active לטאב הנוכחי
+  document.getElementById('tab-pl')?.classList.remove('active');
+  const cur = document.querySelector('.page.active');
+  const curId = cur?.id?.replace('page-','');
+  if (curId) document.getElementById('tab-'+curId)?.classList.add('active');
+}
+
+// ── פילטר ראשי ──
+let libFilter = 'all';
+function setLibFilter(f) {
+  libFilter = f;
+  document.querySelectorAll('.lf-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('lf-' + f);
+  if (btn) btn.classList.add('active');
+  const ss = document.getElementById('savedSection');
+  const so = document.getElementById('songsSection');
+  const gr = document.getElementById('genreRow');
+  const sh = document.getElementById('songsSectionHeader');
+  if (f === 'saved') {
+    if (ss) ss.style.display = '';
+    if (so) so.style.display = 'none';
+    if (gr) gr.style.display = 'none';
+  } else if (f === 'pl') {
+    if (ss) ss.style.display = 'none';
+    if (so) so.style.display = '';
+    if (gr) gr.style.display = '';
+  } else {
+    if (ss) ss.style.display = '';
+    if (so) so.style.display = '';
+    if (gr) gr.style.display = '';
+  }
+  renderLib();
+}
+
+// ── Builder sheet ──
+function openBuilder() {
+  const ov = document.getElementById('builderOverlay');
+  if (ov) ov.style.display = 'block';
+}
+function closeBuilder() {
+  const ov = document.getElementById('builderOverlay');
+  if (ov) ov.style.display = 'none';
+}
+
+// ══ GENRE TABS ══
+function renderGenres() {
+  const genres = [...new Set(library.map(t => t.genre))];
+  let html = `<div class="gtab active" onclick="setGenre('all',this)">הכל (${library.length})</div>`;
+  genres.forEach(g => {
+    const c = library.filter(t => t.genre === g).length;
+    html += `<div class="gtab" onclick="setGenre('${g}',this)">${genreEmoji(g)} ${g} (${c})</div>`;
+  });
+  document.getElementById('genreRow').innerHTML = html;
+}
+
+function setGenre(g, el) {
+  activeGenre = g;
+  document.querySelectorAll('.gtab').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+  renderLib();
+}
+
+// ══ LIBRARY ══
+function renderLib() {
+  const q = (document.getElementById('srch')?.value || '').toLowerCase();
+  const countEl = document.getElementById('libCount');
+  if (countEl) countEl.textContent = library.length + ' שירים';
+  let list = library.filter(t => {
+    const mq = !q || t.name.toLowerCase().includes(q) || (t.artist||'').toLowerCase().includes(q);
+    const mg = activeGenre === 'all' || t.genre === activeGenre;
+    return mq && mg;
+  });
+  const el = document.getElementById('libList');
+  if (!list.length) {
+    el.innerHTML = `<div class="state-box"><div class="icon">🔍</div><h4>לא נמצאו שירים</h4></div>`;
+    return;
+  }
+  let html = '';
+  if (activeGenre === 'all') {
+    [...new Set(list.map(t => t.genre))].forEach(g => {
+      html += `<div class="sec-lbl">${genreEmoji(g)} ${g}</div>`;
+      html += list.filter(t => t.genre === g).map(t => rowHTML(t)).join('');
+    });
+  } else {
+    html = list.map(t => rowHTML(t)).join('');
+  }
+  el.innerHTML = html;
+}
+
+function rowHTML(t) {
+  const inPl = plTracks.some(x => x.id === t.id);
+  const isAct = queue[qIdx]?.id === t.id;
+  const isSel = selectedIds.has(t.id);
+  if (selectMode) {
+    return `<div class="track-row ${isSel ? 'sel-row' : ''}"
+      data-tid="${t.id}"
+      onclick="toggleSelect('${t.id}',event)">
+      <div class="sel-cb">${isSel ? '✓' : ''}</div>
+      <div class="t-art">
+        <span>${t.emoji}</span>
+      </div>
+      <div class="t-info">
+        <div class="t-name">${t.name}</div>
+        <div class="t-sub">${[t.artist, t.genre].filter(Boolean).join(' · ')}</div>
+      </div>
+      <div class="t-dur">${fmt(t.duration)}</div>
+    </div>`;
+  }
+  return `<div class="track-row ${isAct ? 'active' : ''}"
+    draggable="true" ondragstart="dragStart(event,'${t.id}')"
+    onclick="playTrack('${t.id}')">
+    <div class="t-art ${isAct ? 'on' : ''}">
+      <span>${t.emoji}</span>
+      <div class="t-art-ov">${isAct && isPlaying ? '⏸' : '▶'}</div>
+    </div>
+    <div class="t-info">
+      <div class="t-name">${t.name}</div>
+      <div class="t-sub">${[t.artist, t.genre].filter(Boolean).join(' · ')}</div>
+    </div>
+    <div class="t-dur">${fmt(t.duration)}</div>
+    <button class="t-plus ${inPl ? 'in' : ''}"
+      onclick="event.stopPropagation();addToBuild('${t.id}')">${inPl ? '✓' : '＋'}</button>
+    <button onclick="event.stopPropagation();openEditTrack('${t.id}')"
+      style="width:28px;height:28px;border-radius:50%;background:transparent;border:none;color:var(--txt3);font-size:14px;cursor:pointer;opacity:0;transition:opacity .15s"
+      class="t-edit">✏</button>
+  </div>`;
+}
+
+function updateBadges() {
+  // bdg-lib removed
+  // bdg-pl removed
+}
+
+// ══ PLAYER ══
+function playTrack(id) {
+  // אם השיר נמצא ב-queue הנוכחי (פלייליסט), נגן ממנו ישירות
+  const queueIdx = queue.findIndex(t => t.id === id);
+  if (queueIdx !== -1) {
+    qIdx = queueIdx;
+    loadAndPlay();
+    recordHistory(queue[queueIdx]);
+    return;
+  }
+  // אחרת — נגן מהספרייה
+  const libIdx = library.findIndex(t => t.id === id);
+  if (libIdx === -1) return;
+  queue = [...library]; qIdx = libIdx;
+  loadAndPlay();
+  recordHistory(library[libIdx]);
+}
+
+function loadAndPlay() {
+  const t = queue[qIdx];
+  if (!t) return;
+  audio.src = t.url;
+  audio.load();
+  // אפס progress
+  document.getElementById('progFill').style.width = '0%';
+  document.getElementById('tEl').textContent = '0:00';
+  document.getElementById('tDur').textContent = '0:00';
+  audio.onloadedmetadata = () => {
+    document.getElementById('tDur').textContent = fmt(audio.duration);
+    // שמור duration בספרייה
+    const libT = library.find(x => x.id === t.id);
+    if (libT) libT.duration = audio.duration;
+  };
+  audio.play().catch(e => showToast('שגיאת השמעה: ' + e.message, 'err'));
+  isPlaying = true;
+  updateNP(); renderLib();
+  if (rcMode === 'controller') {
+    sendAction('track', { track_url: t.url, track_name: t.name || '' });
+  }
+}
+
+function togglePlay() {
+  if (qIdx === -1 && library.length) { queue = [...library]; qIdx = 0; loadAndPlay(); return; }
+  if (isPlaying) {
+    audio.pause(); isPlaying = false;
+    if (rcMode === 'controller') sendAction('pause');
+  } else {
+    audio.play().catch(() => {}); isPlaying = true;
+    if (rcMode === 'controller') sendAction('resume');
+  }
+  updateNP(); renderLib();
+}
+
+function nextTrack() {
+  if (!queue.length) return;
+  qIdx = isShuffle ? Math.floor(Math.random() * queue.length) : (qIdx + 1) % queue.length;
+  loadAndPlay(); recordHistory(queue[qIdx]);
+  if (rcMode === 'controller') sendAction('track', { track_url: queue[qIdx]?.url || '', track_name: queue[qIdx]?.name || '' });
+}
+
+function prevTrack() {
+  if (audio.currentTime > 3) { audio.currentTime = 0; return; }
+  qIdx = (qIdx - 1 + queue.length) % queue.length;
+  loadAndPlay();
+  if (rcMode === 'controller') sendAction('track', { track_url: queue[qIdx]?.url || '', track_name: queue[qIdx]?.name || '' });
+}
+
+function toggleShuffle() { isShuffle = !isShuffle; document.getElementById('btnSh').classList.toggle('on', isShuffle); showToast(isShuffle ? '⇌ ערבוב פועל' : '⇌ כבוי', 'info'); }
+function toggleRepeat() { isRepeat = !isRepeat; document.getElementById('btnRep').classList.toggle('on', isRepeat); showToast(isRepeat ? '↺ חזרה פועל' : '↺ כבוי', 'info'); }
+function onEnd() { if (isRepeat) { audio.currentTime = 0; audio.play(); return; } nextTrack(); }
+
+function updateNP() {
+  const t = queue[qIdx];
+  const on = isPlaying && !!t;
+  document.getElementById('vinyl').classList.toggle('on', on);
+  document.getElementById('logoRing').classList.toggle('on', on);
+  document.getElementById('eq').classList.toggle('on', on);
+  document.getElementById('needle').classList.toggle('on', on);
+  document.getElementById('progTrack').classList.toggle('playing', on);
+  document.getElementById('btnPlay').textContent = isPlaying ? '⏸' : '▶';
+  if (t) {
+    document.getElementById('npName').textContent = t.name;
+    document.getElementById('npArtist').textContent = t.artist || 'EIV Collection';
+    document.getElementById('discEmoji').textContent = t.emoji || '🎵';
+    document.getElementById('npGenre').textContent = (t.emoji || '🎵') + ' ' + (t.genre || 'EIV');
+    document.getElementById('tDur').textContent = fmt(t.duration || 0);
+  }
+  const cnt = listenHistory.length;
+  document.getElementById('aiSub').textContent = cnt >= 3
+    ? `האזנת ל-${cnt} שירים — לחץ לקבלת המלצה!`
+    : `האזן עוד ${Math.max(0, 3 - cnt)} שירים לקבלת המלצה`;
+}
+
+function updateProg() {
+  if (!audio.duration) return;
+  const p = (audio.currentTime / audio.duration) * 100;
+  document.getElementById('progFill').style.width = p + '%';
+  document.getElementById('tEl').textContent = fmt(audio.currentTime);
+}
+
+function seekTo(e) {
+  if (!audio.duration) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+}
+
+function setVol(v) { audio.volume = v / 100; }
+function toggleMute() {
+  audio.muted = !audio.muted;
+  document.getElementById('volIc').textContent = audio.muted ? '🔇' : '🔊';
+}
+
+// ══ HISTORY ══
+function recordHistory(t) {
+  if (!t) return;
+  listenHistory.unshift({ id: t.id, name: t.name, genre: t.genre, artist: t.artist });
+  listenHistory = listenHistory.slice(0, 50);
+  localStorage.setItem('eiv_hist2_' + CLIENT, JSON.stringify(listenHistory));
+}
+
+// ══ AI ══
+async function openAI() {
+  document.getElementById('modalAI').classList.add('open');
+  document.getElementById('aiContent').innerHTML = `<div class="state-box"><div class="icon spin-ic">🤖</div><h4>מנתח העדפות...</h4></div>`;
+
+  if (listenHistory.length < 2) {
+    document.getElementById('aiContent').innerHTML = `<div class="state-box"><div class="icon">🎵</div><h4>האזן לכמה שירים קודם</h4><p>אחרי 3+ שירים ה-AI יבנה לך פלייליסט אישי</p></div>`;
+    return;
+  }
+
+  try {
+    const histStr = listenHistory.slice(0,15).map(h => `${h.name}${h.artist?' - '+h.artist:''} (${h.genre})`).join(', ');
+    const genreCount = {};
+    listenHistory.forEach(h => { genreCount[h.genre] = (genreCount[h.genre]||0)+1; });
+    const topGenres = Object.entries(genreCount).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([g])=>g).join(', ');
+    const avail = library.map(t=>`${t.name}${t.artist?' - '+t.artist:''} (${t.genre})`).slice(0,80).join('\n');
+
+    const prompt = `אתה מערכת המלצות מוזיקה חכמה לעסק.
+הלקוח האזין ל: ${histStr}
+הז'אנרים המועדפים: ${topGenres}
+בנה פלייליסט מותאם אישית מהשירים הזמינים.
+שירים זמינים:
+${avail}
+בחר 8-12 שירים שמתאימים לסגנון של הלקוח.
+החזר JSON בלבד, ללא טקסט נוסף, ללא backticks:
+{"name":"שם פלייליסט","reason":"משפט קצר למה בחרת כך","tracks":["שיר1","שיר2",...]}`;
+
+    const res = await fetch('http://79.143.176.78:3030', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-5',
+        max_tokens:600,
+        messages:[{ role:'user', content: prompt }]
+      })
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error('API error ' + res.status + ': ' + err.slice(0,100));
+    }
+    const d = await res.json();
+    const txt = d.content?.map(c=>c.text||'').join('')||'';
+    const clean = txt.replace(/```json|```/g,'').replace(/^[^{]*/,'').replace(/[^}]*$/,'').trim();
+    const result = JSON.parse(clean);
+    const matched = result.tracks
+      .map(n => library.find(t => t.name.toLowerCase().includes(n.toLowerCase()) || n.toLowerCase().includes(t.name.toLowerCase())))
+      .filter(Boolean).slice(0,12);
+
+    window._aiTracks = matched;
+    window._aiName = result.name;
+
+    document.getElementById('aiContent').innerHTML = `
+      <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.15);border-radius:12px;padding:12px;margin-bottom:14px">
+        <div style="font-size:15px;font-weight:900;margin-bottom:4px;background:linear-gradient(135deg,#f1f0ff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">🎵 ${result.name}</div>
+        <div style="font-size:11px;color:var(--txt2)">${result.reason}</div>
+      </div>
+      <div style="max-height:260px;overflow-y:auto">
+        ${matched.map((t,i)=>`
+          <div class="track-row" style="cursor:default">
+            <div class="t-art"><span>${t.emoji}</span></div>
+            <div class="t-info"><div class="t-name">${i+1}. ${t.name}</div><div class="t-sub">${t.artist} · ${t.genre}</div></div>
+            <div class="t-dur">${fmt(t.duration)}</div>
+          </div>`).join('')}
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:14px" onclick="useAI()">✓ השתמש בפלייליסט הזה</button>`;
+  } catch(e) {
+    document.getElementById('aiContent').innerHTML = `<div class="state-box"><div class="icon">⚠</div><h4>שגיאה</h4><p>${e.message}</p></div>`;
+  }
+}
+
+function useAI() {
+  if (!window._aiTracks?.length) return;
+  const name = window._aiName || 'פלייליסט AI';
+  const tracks = [...window._aiTracks];
+  // שמור ישירות כפלייליסט
+  const pl = { id: 'ai_' + Date.now(), name, tracks };
+  savedPls.unshift(pl);
+  localStorage.setItem('eiv_pl2_' + CLIENT, JSON.stringify(savedPls));
+  // הפעל מיד
+  activePl = pl;
+  queue = [...tracks];
+  qIdx = 0;
+  closeModal();
+  loadAndPlay();
+  goTab('now');
+  updateBadges();
+  showToast('✓ ' + name + ' — מנגן!', 'ok');
+}
+
+function closeModal() { document.getElementById('modalAI').classList.remove('open'); }
+
+// ══ EDIT TRACK ══
+let _editId = null;
+function openEditTrack(id) {
+  const t = library.find(x => x.id === id);
+  if (!t) return;
+  _editId = id;
+  document.getElementById('editName').value = t.name || '';
+  document.getElementById('editArtist').value = t.artist || '';
+  document.getElementById('editGenre').value = t.genre || 'פופ';
+  document.getElementById('modalEdit').classList.add('open');
+}
+function closeEditModal() {
+  document.getElementById('modalEdit').classList.remove('open');
+  _editId = null;
+}
+function saveEditTrack() {
+  if (!_editId) return;
+  const t = library.find(x => x.id === _editId);
+  if (!t) return;
+  t.name   = document.getElementById('editName').value.trim() || t.name;
+  t.artist = document.getElementById('editArtist').value.trim();
+  t.genre  = document.getElementById('editGenre').value;
+  t.emoji  = genreEmoji(t.genre);
+  // שמור ב-localStorage
+  const overrides = JSON.parse(localStorage.getItem('eiv_track_meta') || '{}');
+  overrides[_editId] = { name: t.name, artist: t.artist, genre: t.genre };
+  localStorage.setItem('eiv_track_meta', JSON.stringify(overrides));
+  closeEditModal();
+  renderLib();
+  if (queue[qIdx]?.id === _editId) updateNP();
+  showToast('✓ שמור', 'ok');
+}
+document.addEventListener('click', e => { if (e.target.classList.contains('modal-ov')) closeModal(); });
+
+// ══ BUILDER ══
+function addToBuild(id) {
+  if (plTracks.some(t => t.id === id)) { showToast('כבר בפלייליסט', 'info'); return; }
+  const t = library.find(t => t.id === id);
+  if (!t) return;
+  plTracks.push(t);
+  renderBuild(); renderLib();
+  showToast('✓ נוסף לפלייליסט', 'ok');
+}
+
+function removeFromBuild(id) {
+  plTracks = plTracks.filter(t => t.id !== id);
+  renderBuild(); renderLib();
+}
+
+function renderBuild() {
+  const el = document.getElementById('builderList');
+  const hint = document.getElementById('dropHint');
+  hint.style.display = plTracks.length ? 'none' : 'flex';
+  const total = plTracks.reduce((a,t) => a+(t.duration||0), 0);
+  document.getElementById('plMeta').textContent = `${plTracks.length} שירים${total?' · '+fmt(total):''}`;
+  // עדכון גלריית תמונות על הכריכה
+  const cover = document.getElementById('plCoverPreview');
+  if (cover) {
+    if (plTracks.length >= 4) {
+      cover.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;width:100%;height:100%">${plTracks.slice(0,4).map(t=>`<span style="display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(0,0,0,.2)">${t.emoji}</span>`).join('')}</div>`;
+    } else if (plTracks.length) {
+      cover.innerHTML = `<span style="font-size:38px">${plTracks[0].emoji}</span>`;
+    } else {
+      cover.innerHTML = '🎵';
+    }
+  }
+  el.innerHTML = plTracks.map((t,i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 4px;border-radius:8px;transition:background .12s"
+      draggable="true" ondragstart="plDs(event,${i})" ondragover="event.preventDefault()" ondrop="plDd(event,${i})">
+      <span style="font-size:12px;color:rgba(255,255,255,.3);font-weight:700;width:18px;text-align:center;flex-shrink:0">${i+1}</span>
+      <div style="width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,var(--s3),var(--s2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${t.emoji}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.name}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:1px">${t.artist||t.genre||''}</div>
+      </div>
+      <span style="font-size:11px;color:rgba(255,255,255,.35);flex-shrink:0">${fmt(t.duration)}</span>
+      <button onclick="removeFromBuild('${t.id}')" style="width:28px;height:28px;border-radius:50%;background:none;border:none;color:rgba(255,255,255,.3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0">✕</button>
+    </div>`).join('');
+}
+
+function coverHTML(tracks, isActive) {
+  // תמיד מציג דיסק EIV — לא אמוג'ים
+  const spinning = isActive ? 'animation:spin 4s linear infinite' : '';
+  return `<div style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center">
+    <div style="width:72%;aspect-ratio:1;border-radius:50%;${spinning};
+      background:conic-gradient(#080814 0deg,#0e0e24 40deg,#161638 80deg,#2a2a6a 120deg,#161638 160deg,#0e0e24 200deg,#080814 240deg,#0e0e24 280deg,#161638 320deg,#080814 360deg);
+      box-shadow:0 0 20px rgba(0,0,0,.6),inset 0 0 10px rgba(0,0,0,.4);
+      display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;border-radius:50%;border:1px solid rgba(255,255,255,.06)"></div>
+      <div style="position:absolute;width:55%;height:55%;border-radius:50%;border:1px solid rgba(255,255,255,.04)"></div>
+      <div style="width:30%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#111 50%,#1a0a0a 100%);
+        display:flex;align-items:center;justify-content:center;z-index:2;
+        box-shadow:0 0 0 2px rgba(124,92,252,.3)">
+        <span style="font-size:11px;font-weight:900;letter-spacing:-1px;color:rgba(255,255,255,.7)">EIV</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderPls() {
+  const el = document.getElementById('savedList');
+  renderBuild();
+  if (!el) return;
+  if (!savedPls.length) {
+    el.innerHTML = `<div style="grid-column:1/-1;padding:20px 0;text-align:center;color:rgba(255,255,255,.3);font-size:13px">
+      <div style="font-size:32px;margin-bottom:8px">🎵</div>לחץ ＋ חדש לפלייליסט ראשון</div>`;
+    return;
+  }
+  const grads = ['linear-gradient(135deg,#7c5cfc,#f472b6)','linear-gradient(135deg,#38bdf8,#7c5cfc)','linear-gradient(135deg,#34d399,#38bdf8)','linear-gradient(135deg,#f472b6,#fb923c)','linear-gradient(135deg,#a78bfa,#38bdf8)'];
+  el.innerHTML = savedPls.map(pl => {
+    const total = pl.tracks.reduce((a,t)=>a+(t.duration||0),0);
+    const isAct = activePl?.id === pl.id;
+    const grad = grads[Math.abs(pl.id.split('').reduce((a,c)=>a+c.charCodeAt(0),0)) % grads.length];
+    return `<div class="sp-card ${isAct?'active':''}" onclick="activateSaved('${pl.id}')">
+      <div class="sp-card-cover" style="background:${grad}">
+        ${coverHTML(pl.tracks, isAct)}
+        <button class="sp-card-play" onclick="event.stopPropagation();activateSaved('${pl.id}')">▶</button>
+        <button class="sp-card-del" onclick="event.stopPropagation();delPl('${pl.id}')">✕</button>
+      </div>
+      <div class="sp-card-info">
+        <div class="sp-card-name">${pl.name}</div>
+        <div class="sp-card-meta">${pl.tracks.length} שירים${total?' · '+fmt(total):''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function clearBuild() { plTracks = []; document.getElementById('plNameInp').value = 'פלייליסט חדש'; renderBuild(); renderLib(); }
+
+function savePl() {
+  if (!plTracks.length) { showToast('הוסף שירים קודם', 'err'); return; }
+  const name = document.getElementById('plNameInp').value.trim() || 'פלייליסט ' + (savedPls.length+1);
+  savedPls.unshift({ id: 'pl_'+Date.now(), name, tracks:[...plTracks], created:Date.now() });
+  localStorage.setItem('eiv_pl2_'+CLIENT, JSON.stringify(savedPls));
+  updateBadges();
+  // רענן sheet פלייליסטים אם פתוח
+  const plOv = document.getElementById('plOverlay');
+  if (plOv && plOv.style.display !== 'none') openPlaylists();
+  closeBuilder();
+  showToast('✓ פלייליסט נשמר', 'ok');
+}
+
+function activatePl() {
+  if (!plTracks.length) { showToast('הוסף שירים קודם', 'err'); return; }
+  const name = document.getElementById('plNameInp').value.trim() || 'פלייליסט חדש';
+  activePl = { id:'tmp_'+Date.now(), name, tracks:[...plTracks] };
+  queue = [...plTracks]; qIdx = 0; loadAndPlay(); closeBuilder(); goTab('now');
+  showToast('▶ הופעל: ' + name, 'ok');
+}
+
+function activateSaved(id, startIdx) {
+  const pl = savedPls.find(p => p.id===id);
+  if (!pl) return;
+  activePl = pl;
+  queue = [...pl.tracks];
+  qIdx = (startIdx !== undefined && startIdx >= 0) ? startIdx : 0;
+  loadAndPlay(); goTab('now'); renderPls();
+  showToast('▶ ' + pl.name, 'ok');
+}
+
+function editPl(id) {
+  const pl = savedPls.find(p => p.id===id);
+  if (!pl) return;
+  plTracks = [...pl.tracks];
+  document.getElementById('plNameInp').value = pl.name;
+  savedPls = savedPls.filter(p => p.id !== id);
+  localStorage.setItem('eiv_pl2_'+CLIENT, JSON.stringify(savedPls));
+  renderBuild(); renderPls();
+  openBuilder();
+}
+
+function delPl(id) {
+  savedPls = savedPls.filter(p => p.id!==id);
+  localStorage.setItem('eiv_pl2_'+CLIENT, JSON.stringify(savedPls));
+  if (activePl?.id===id) activePl = null;
+  updateBadges();
+  // רענן sheet מיידית אם פתוח
+  const ov = document.getElementById('plOverlay');
+  if (ov && ov.style.display !== 'none') renderPlSheet();
+  showToast('🗑 נמחק');
+}
+
+// ══ DRAG ══
+function dragStart(e,id) { dragId=id; e.dataTransfer.effectAllowed='copy'; }
+function dzOver(e) { e.preventDefault(); document.getElementById('dropZone').classList.add('drag-on'); }
+function dzLeave() { document.getElementById('dropZone').classList.remove('drag-on'); }
+function dzDrop(e) { e.preventDefault(); document.getElementById('dropZone').classList.remove('drag-on'); if(dragId){addToBuild(dragId);dragId=null;} }
+function plDs(e,i) { plDragIdx=i; }
+function plDd(e,i) {
+  if(plDragIdx===null||plDragIdx===i) return;
+  const [m]=plTracks.splice(plDragIdx,1); plTracks.splice(i,0,m);
+  plDragIdx=null; renderBuild();
+}
+
+// ══ UTILS ══
+function fmt(s){ s=Math.round(s||0); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ══ REMOTE CONTROL — REALTIME ══
+const SB_REST = SB_URL + '/rest/v1';
+let rcMode = 'controller';
+let realtimeChannel = null;
+let lastCommandId = null;
+
+function setMode(mode) {
+  rcMode = mode;
+  document.getElementById('modeControllerBtn').classList.toggle('active', mode === 'controller');
+  document.getElementById('modeStreamerBtn').classList.toggle('active', mode === 'streamer');
+
+  const dot = document.getElementById('rcDot');
+  const title = document.getElementById('rcTitle');
+  const sub = document.getElementById('rcSub');
+  const btn = document.getElementById('rcBtn');
+
+  if (mode === 'controller') {
+    dot.className = 'rc-dot controller';
+    title.textContent = 'מצב שליטה — נייד';
+    sub.textContent = 'בחר שיר או פלייליסט ולחץ שלח';
+    btn.textContent = '📡 שלח';
+    btn.className = 'rc-btn';
+    btn.onclick = sendToStreamer;
+    stopListening();
+  } else {
+    dot.className = 'rc-dot';
+    title.textContent = 'מצב סטרימר — ממתין לפקודות';
+    sub.textContent = 'פותח בעסק — מקבל פקודות מהנייד';
+    btn.textContent = '⏹ עצור';
+    btn.className = 'rc-btn stop';
+    btn.onclick = stopListening;
+    startListening();
+  }
+}
+
+// ── CONTROLLER: שלח פקודה ──
+async function sendToStreamer() {
+  const t = queue[qIdx];
+  if (!t && !activePl) { showToast('בחר שיר או פלייליסט קודם', 'err'); return; }
+
+  const payload = {
+    client_id: CLIENT,
+    action: activePl ? 'playlist' : 'track',
+    track_url: t ? t.url : '',
+    track_name: t ? t.name : '',
+    playlist: activePl ? activePl.tracks.map(x => ({ url: x.url, name: x.name, artist: x.artist, emoji: x.emoji })) : [],
+    updated_at: new Date().toISOString()
+  };
+
+  try {
+    // Upsert command
+    // Delete old + insert new = always fresh UUID
+    await fetch(SB_REST + '/eiv_remote_control?client_id=eq.' + encodeURIComponent(CLIENT), {
+      method: 'DELETE',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+    await fetch(SB_REST + '/eiv_remote_control', {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const name = activePl ? activePl.name : (t ? t.name : '');
+    showToast('📡 נשלח: ' + name, 'ok');
+    document.getElementById('rcDot').classList.add('live');
+    document.getElementById('rcSub').textContent = 'נשלח: ' + name;
+
+  } catch(e) {
+    showToast('שגיאה: ' + e.message, 'err');
+  }
+}
+
+// Send any action to streamer
+async function sendAction(action, extra = {}) {
+  try {
+    const payload = { client_id: CLIENT, action, track_url: '', track_name: '', playlist: [], updated_at: new Date().toISOString(), ...extra };
+    // Delete old command first
+    await fetch(SB_REST + '/eiv_remote_control?client_id=eq.' + encodeURIComponent(CLIENT), {
+      method: 'DELETE',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+    // Insert new command — always gets a new UUID
+    await fetch(SB_REST + '/eiv_remote_control', {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) { console.error(e); }
+}
+
+// ── STREAMER: האזן לפקודות REALTIME ──
+function startListening() {
+  document.getElementById('rcDot').className = 'rc-dot live';
+  document.getElementById('rcSub').textContent = 'מחובר — ממתין לפקודות...';
+  lastCommandId = null;
+
+  // Fast polling every 1 second + immediate fetch
+  realtimeChannel = setInterval(pollCommand, 1000);
+  pollCommand();
+}
+
+function stopListening() {
+  clearInterval(realtimeChannel);
+  realtimeChannel = null;
+  document.getElementById('rcDot').className = 'rc-dot';
+  document.getElementById('rcTitle').textContent = 'מצב סטרימר — עצור';
+  document.getElementById('rcSub').textContent = 'לחץ על מצב סטרימר להפעלה';
+}
+
+async function pollCommand() {
+  try {
+    const res = await fetch(
+      SB_REST + '/eiv_remote_control?client_id=eq.' + encodeURIComponent(CLIENT) + '&order=updated_at.desc&limit=1',
+      { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
+    );
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data || !data.length) return;
+    const cmd = data[0];
+    // New command = new id (DELETE+INSERT gives fresh UUID each time)
+    if (cmd.id === lastCommandId) return;
+    lastCommandId = cmd.id;
+    executeCommand(cmd);
+  } catch(e) {}
+}
+
+function executeCommand(cmd) {
+  if (!cmd) return;
+  if (cmd.id === lastCommandId) return;
+  lastCommandId = cmd.id;
+
+  document.getElementById('rcTitle').textContent = 'מצב סטרימר — פעיל';
+  document.getElementById('rcSub').textContent = 'מנגן: ' + (cmd.track_name || 'פלייליסט');
+
+  if (cmd.action === 'pause') {
+    audio.pause(); isPlaying = false; updateNP();
+    showToast('⏸ מושהה', 'info');
+
+  } else if (cmd.action === 'resume') {
+    audio.play().catch(() => {}); isPlaying = true; updateNP();
+    showToast('▶ ממשיך', 'ok');
+
+  } else if (cmd.action === 'next') {
+    nextTrack();
+
+  } else if (cmd.action === 'prev') {
+    prevTrack();
+
+  } else if (cmd.action === 'volume') {
+    audio.volume = (cmd.track_url || 80) / 100;
+
+  } else if (cmd.action === 'track' && cmd.track_url) {
+    // Don't restart if already playing same track
+    const curSrc = decodeURIComponent(audio.src || '');
+    const newSrc = decodeURIComponent(cmd.track_url || '');
+    if (curSrc === newSrc && !audio.paused) return;
+    audio.src = cmd.track_url;
+    audio.play().catch(() => {});
+    isPlaying = true;
+    document.getElementById('npName').textContent = cmd.track_name || 'שיר';
+    document.getElementById('bigDisc').classList.add('on');
+    document.getElementById('logoRing').classList.add('on');
+    document.getElementById('eq').classList.add('on');
+    document.getElementById('btnPlay').textContent = '⏸';
+    showToast('▶ ' + cmd.track_name, 'ok');
+
+  } else if (cmd.action === 'playlist' && cmd.playlist && cmd.playlist.length) {
+    const tracks = cmd.playlist;
+    queue = tracks; qIdx = 0;
+    audio.src = tracks[0].url;
+    audio.play().catch(() => {});
+    isPlaying = true;
+    activePl = { id: 'remote', name: 'פלייליסט מרחוק', tracks };
+    updateNP();
+    showToast('▶ פלייליסט התקבל', 'ok');
+  }
+}
+
+// Override activatePl to also send to streamer if in controller mode
+const _origActivatePl = activatePl;
+
+// ══ SELECT MODE ══
+let selectMode = false;
+let selectedIds = new Set();
+
+function toggleSelectMode() {
+  selectMode = !selectMode;
+  selectedIds.clear();
+  const nameInp = document.getElementById('newPlName');
+  if (nameInp) nameInp.value = '';
+  const normal = document.getElementById('libNormal');
+  const bar    = document.getElementById('selectBar');
+  if (selectMode) {
+    if (normal) normal.style.display = 'none';
+    if (bar)    { bar.style.display = 'block'; }
+  } else {
+    if (normal) normal.style.display = '';
+    if (bar)    bar.style.display = 'none';
+  }
+  const countEl = document.getElementById('selectCount');
+  if (countEl) countEl.textContent = '0 נבחרו';
+  renderLib();
+}
+
+function toggleSelect(id, e) {
+  if (e) e.stopPropagation();
+  if (selectedIds.has(id)) selectedIds.delete(id);
+  else selectedIds.add(id);
+  const n = selectedIds.size;
+  const countEl = document.getElementById('selectCount');
+  if (countEl) countEl.textContent = n ? n + ' שירים נבחרו' : 'בחר שירים לפלייליסט';
+  // עדכון מהיר — רק השורה הספציפית, ללא re-render
+  const row = document.querySelector(`.track-row[data-tid="${id}"]`);
+  if (row) {
+    const isSel = selectedIds.has(id);
+    row.classList.toggle('sel-row', isSel);
+    const cb = row.querySelector('.sel-cb');
+    if (cb) cb.textContent = isSel ? '✓' : '';
+  }
+}
+
+// ══ BUILD PLAYLIST FROM SELECTION ══
+function buildFromSelected() {
+  if (!selectedIds.size) { showToast('בחר שירים קודם','info'); return; }
+  const tracks = library.filter(t => selectedIds.has(t.id));
+  plTracks = [...tracks];
+  const nameInp = document.getElementById('newPlName');
+  const plName = nameInp && nameInp.value.trim();
+  if (plName) {
+    const plNameInp = document.getElementById('plNameInp');
+    if (plNameInp) plNameInp.value = plName;
+  }
+  renderBuild();
+  toggleSelectMode();
+  openBuilder(); // פותח sheet מלמטה
+  showToast('✓ ' + tracks.length + ' שירים נוספו');
+}
+
+// העלאה ומחיקה מנוהלות ע"י המנהל דרך Supabase Dashboard ישירות
+</script>
+
+<!-- BOTTOM NAV -->
+<div class="tabs">
+  <div class="tab active" onclick="goTab('now')" id="tab-now">
+    <span class="tab-icon">🎵</span>
+    <span>עכשיו</span>
+  </div>
+  <div class="tab" onclick="goTab('lib')" id="tab-lib">
+    <span class="tab-icon">🎧</span>
+    <span>ספרייה</span>
+  </div>
+  <div class="tab" onclick="goTab('pl')" id="tab-pl">
+    <span class="tab-icon">📋</span>
+    <span>פלייליסטים</span>
+  </div>
+</div>
+<script>
+  // רישום Service Worker — מאפשר חוויית אפליקציה מותקנת
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('sw.js').catch(function(){});
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מתנתק...</title>
+<style>
+body { background: #0a0f1a; color: #fff; font-family: Heebo, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; flex-direction: column; gap: 16px; }
+.spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #7b5ea7; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="spinner"></div>
+<div>מתנתק...</div>
+<script>
+const SB_URL = 'https://lhnjxtwmngfsetgzqjts.supabase.co';
+const SB_KEY = 'sb_publishable_9nbM2jActQcpUhPzUemOVA_z2R0TRJd';
+
+async function doLogout() {
+  const code = localStorage.getItem('eiv_code');
+  const deviceId = localStorage.getItem('eiv_device');
+
+  // Clear device_id from Supabase
+  if (code) {
+    try {
+      await fetch(SB_URL + '/rest/v1/clients?code=eq.' + encodeURIComponent(code), {
+        method: 'PATCH',
+        headers: {
+          'apikey': SB_KEY,
+          'Authorization': 'Bearer ' + SB_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ device_id: null, pending_device: null })
+      });
+    } catch(e) {}
+  }
+
+  // Clear all local storage
+  localStorage.clear();
+  sessionStorage.clear();
+
+  // Go back to player
+  window.location.replace('https://app.eiv-music.com/');
+}
+
+doLogout();
+</script>
+</body>
+</html>

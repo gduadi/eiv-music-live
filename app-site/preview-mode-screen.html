@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>תצוגה מקדימה — מסך בחירה</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--p1:#7b5ea7;--p2:#b06ab3;--p3:#e0a96d;--p4:#4fc3f7;--p5:#f06292;--dark:#07070d;--safe-top:0px;--safe-bottom:0px}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;height:100dvh}
+body{font-family:'Heebo',sans-serif;background:#15151f;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:16px}
+.phone{position:relative;width:100%;max-width:420px;height:100dvh;max-height:900px;background:#07070d;overflow:hidden;display:flex;flex-direction:column;border-radius:40px;border:1px solid rgba(176,106,179,0.18);box-shadow:0 40px 100px rgba(0,0,0,0.7)}
+.screen{flex:1;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden}
+.hidden{display:none!important}
+@media(max-width:460px){body{padding:0}.phone{border-radius:0;max-height:none}}
+</style>
+</head>
+<body>
+<div class="phone">
+<section id="modeScreen" class="screen">
+    <style>
+    #modeScreen{
+      background:
+        radial-gradient(circle at 28% 10%,rgba(124,92,252,.20),transparent 42%),
+        radial-gradient(circle at 82% 86%,rgba(240,98,146,.14),transparent 44%),
+        #07070d!important;
+    }
+    #modeScreen .ms-wrap{
+      flex:1;display:flex;flex-direction:column;justify-content:center;
+      padding:calc(var(--safe-top,0px) + 26px) 22px calc(var(--safe-bottom,0px) + 22px);
+    }
+    #modeScreen .ms-head{text-align:center;margin-bottom:26px}
+    #modeScreen .ms-logo{
+      width:62px;height:62px;border-radius:50%;margin:0 auto 16px;
+      background:conic-gradient(from 0deg,var(--p1),var(--p2),var(--p4),var(--p5),var(--p1));
+      padding:2.5px;animation:msRing 4s linear infinite;
+      box-shadow:0 0 36px rgba(124,92,252,.35)
+    }
+    #modeScreen .ms-logo .ms-logo-in{
+      width:100%;height:100%;border-radius:50%;background:#07070d;
+      display:flex;align-items:flex-end;justify-content:center;gap:2.5px;padding:18px 0
+    }
+    #modeScreen .ms-logo .ms-logo-in i{display:block;width:3.5px;border-radius:99px;background:linear-gradient(180deg,#2df3ff,#6966ff,#c656ff);animation:msEq 1.1s ease-in-out infinite}
+    #modeScreen .ms-logo i:nth-child(1){height:9px;animation-delay:0s}
+    #modeScreen .ms-logo i:nth-child(2){height:18px;animation-delay:.15s}
+    #modeScreen .ms-logo i:nth-child(3){height:24px;animation-delay:.3s}
+    #modeScreen .ms-logo i:nth-child(4){height:15px;animation-delay:.45s}
+    #modeScreen .ms-logo i:nth-child(5){height:10px;animation-delay:.6s}
+    @keyframes msRing{to{transform:rotate(360deg)}}
+    #modeScreen .ms-welcome{font:700 13px Heebo;color:var(--p4);letter-spacing:.5px;margin-bottom:6px}
+    #modeScreen .ms-title{font:900 27px Heebo;color:#fff;margin:0 0 6px;line-height:1.15}
+    #modeScreen .ms-sub{font:500 14px Heebo;color:#9aa2bd;margin:0}
+    #modeScreen .ms-cards{display:flex;flex-direction:column;gap:16px}
+    #modeScreen .ms-card{
+      position:relative;width:100%;border:0;cursor:pointer;text-align:right;
+      border-radius:24px;padding:22px;overflow:hidden;
+      display:flex;align-items:center;gap:16px;direction:rtl;
+      font-family:Heebo;color:#fff;
+      border:1px solid rgba(255,255,255,.1);
+      box-shadow:0 18px 44px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);
+      transition:transform .25s cubic-bezier(.2,.9,.25,1),box-shadow .25s;
+      opacity:0;transform:translateY(22px);
+      animation:msIn .55s cubic-bezier(.2,.9,.25,1) forwards;
+    }
+    #modeScreen .ms-card--ch{background:linear-gradient(135deg,#3a2a82,#1c1640 70%);animation-delay:.08s}
+    #modeScreen .ms-card--lib{background:linear-gradient(135deg,#7a2a6e,#2a1640 72%);animation-delay:.2s}
+    @keyframes msIn{to{opacity:1;transform:translateY(0)}}
+    #modeScreen .ms-card:active{transform:scale(.975)}
+    #modeScreen .ms-card:hover{box-shadow:0 22px 54px rgba(0,0,0,.55),0 0 36px rgba(124,92,252,.28),inset 0 1px 0 rgba(255,255,255,.12)}
+    /* shimmer sweep */
+    #modeScreen .ms-card::after{
+      content:"";position:absolute;top:0;bottom:0;width:42%;
+      left:-60%;transform:skewX(-18deg);
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);
+      animation:msShine 4.5s ease-in-out infinite;pointer-events:none
+    }
+    #modeScreen .ms-card--lib::after{animation-delay:1.6s}
+    @keyframes msShine{0%{left:-60%}28%,100%{left:130%}}
+    #modeScreen .ms-glow{
+      position:absolute;inset:-40% -10%;z-index:0;pointer-events:none;
+      background:radial-gradient(circle,rgba(124,92,252,.30),transparent 60%);
+      opacity:.55;
+    }
+    #modeScreen .ms-card--lib .ms-glow{background:radial-gradient(circle,rgba(240,98,146,.28),transparent 60%)}
+    #modeScreen .ms-card-ic{
+      position:relative;z-index:1;flex-shrink:0;
+      width:62px;height:62px;border-radius:18px;
+      background:rgba(8,11,22,.55);border:1px solid rgba(255,255,255,.16);
+      display:flex;align-items:center;justify-content:center;gap:3px;
+      box-shadow:0 0 26px rgba(124,92,252,.4),inset 0 1px 0 rgba(255,255,255,.1);
+      backdrop-filter:blur(6px)
+    }
+    #modeScreen .ms-card-ic .ms-eq{display:flex;align-items:flex-end;gap:3.5px;height:30px}
+    #modeScreen .ms-card-ic .ms-eq i{width:4.5px;border-radius:3px;background:linear-gradient(180deg,#7dd3fc,#a78bfa);animation:msEq 1s ease-in-out infinite}
+    #modeScreen .ms-card-ic .ms-eq i:nth-child(1){height:10px;animation-delay:0s}
+    #modeScreen .ms-card-ic .ms-eq i:nth-child(2){height:22px;animation-delay:.12s}
+    #modeScreen .ms-card-ic .ms-eq i:nth-child(3){height:30px;animation-delay:.24s}
+    #modeScreen .ms-card-ic .ms-eq i:nth-child(4){height:18px;animation-delay:.36s}
+    #modeScreen .ms-card-ic .ms-eq i:nth-child(5){height:12px;animation-delay:.48s}
+    @keyframes msEq{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+    #modeScreen .ms-card-ic--lib{background:rgba(8,11,22,.55);box-shadow:0 0 26px rgba(240,98,146,.4),inset 0 1px 0 rgba(255,255,255,.1)}
+    #modeScreen .ms-card-ic--lib .ms-note{font-size:30px;background:linear-gradient(135deg,#fbbf24,#f06292,#c656ff);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
+    #modeScreen .ms-card-ic--lib .ms-plus{position:absolute;bottom:9px;left:9px;width:19px;height:19px;border-radius:50%;background:linear-gradient(135deg,#f06292,#c656ff);color:#fff;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.4)}
+    #modeScreen .ms-card-tx{position:relative;z-index:1;flex:1;min-width:0}
+    #modeScreen .ms-card-tx b{display:block;font-size:18px;font-weight:900;line-height:1.2;margin-bottom:5px}
+    #modeScreen .ms-card-tx span{display:block;font-size:12.5px;font-weight:500;color:rgba(255,255,255,.72);line-height:1.4}
+    #modeScreen .ms-card-go{position:relative;z-index:1;flex-shrink:0;font-size:30px;font-weight:300;color:rgba(255,255,255,.55);transform:scaleX(-1)}
+    #modeScreen .ms-logout{
+      margin:26px auto 0;background:transparent;border:0;cursor:pointer;
+      color:rgba(255,255,255,.32);font:600 12.5px Heebo;text-decoration:underline;padding:8px
+    }
+    @media(max-height:680px){
+      #modeScreen .ms-wrap{justify-content:flex-start;padding-top:calc(var(--safe-top,0px) + 18px)}
+      #modeScreen .ms-title{font-size:23px}
+      #modeScreen .ms-card{padding:18px}
+    }
+    </style>
+
+    <div class="ms-wrap">
+      <div class="ms-head">
+        <div class="ms-logo"><div class="ms-logo-in"><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="ms-welcome" id="modeWelcomeName">ברוך הבא 👋</div>
+        <h1 class="ms-title">איך תרצה לנגן?</h1>
+        <p class="ms-sub">בחר את חוויית המוזיקה שלך</p>
+      </div>
+
+      <div class="ms-cards">
+        <button class="ms-card ms-card--ch" onclick="eivPickChannels()">
+          <div class="ms-glow"></div>
+          <div class="ms-card-ic"><div class="ms-eq"><i></i><i></i><i></i><i></i><i></i></div></div>
+          <div class="ms-card-tx">
+            <b>פלייליסטים מוכנים</b>
+            <span>תחנות וערוצים שמנגנים מיד — בלי לבחור כלום</span>
+          </div>
+          <div class="ms-card-go">›</div>
+        </button>
+
+        <button class="ms-card ms-card--lib" onclick="eivPickLibrary()">
+          <div class="ms-glow"></div>
+          <div class="ms-card-ic ms-card-ic--lib"><span class="ms-note">♫</span><span class="ms-plus">+</span></div>
+          <div class="ms-card-tx">
+            <b>בחירת שירים</b>
+            <span>בחר שירים משלך וצור את הפלייליסט המושלם</span>
+          </div>
+          <div class="ms-card-go">›</div>
+        </button>
+      </div>
+
+      <button class="ms-logout" onclick="location.href='logout.html'">החלפת לקוח / יציאה</button>
+    </div>
+  </section>
+</div>
+<script>
+// כפתורים בתצוגה מקדימה — רק להמחשה
+window.eivPickChannels=function(){alert("➡️ פלייליסטים מוכנים — ייפתחו הערוצים בנגן האמיתי");};
+window.eivPickLibrary=function(){alert("➡️ בחירת שירים — ייפתחה הספרייה בנגן האמיתי");};
+</script>
+</body>
+</html>
